@@ -5,18 +5,59 @@
 // Console.WriteLine("Jordan")
 
 using System;
-
+using static System.Console;
 namespace ChessGame // Note: actual namespace depends on the project name.
 {
     class Programs
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            WriteLine("Please enter which game mode u want to play:\n1.play with human\n2.play with computer");
+            Game game = new Game();
+            game.setNewGame(Convert.ToInt16(ReadLine()));
+            
         }
     }
 
-    class Board {
+    class Game {
+        private string str_CurGameMode = (GameMode.hvh).ToString();
+        // public Board board = new Board();
+        protected enum GameMode{
+            //human vs human
+            hvh = 1,
+            //computer vs human
+            cvh = 2
+        };
+        
+        protected enum GameType{
+            //Wild tic-tac-toe
+            tictactoe = 1,
+            //Reversi aka Othello
+            reversi = 2
+        }
+        public string CurGameMode{
+            get{ return str_CurGameMode; }
+            set
+            {
+                str_CurGameMode = ((GameMode)Convert.ToInt16(value)-1).ToString();
+                WriteLine(str_CurGameMode + " - " + GameMode.hvh);
+            }
+        }
+
+        public Board setNewGame(int mode){
+            //check whether the input value is a valid number of game mode
+            while ( mode != (int)GameMode.cvh || mode != (int)GameMode.hvh ){
+                WriteLine("Please re-enter a valid number of game mode u want to play:\n1.play with human\n2.play with computer");
+                mode = Convert.ToInt16(ReadLine());
+            }
+            Board board = new Board();
+            return board;
+        }
+    
+    }
+
+    class Board : Game {
+        
          /* 
            # 1 -------
            # 2 | | | |
@@ -35,6 +76,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          * " " >> 2,4,6
          */
 
+        public void drawBoard(){
+
+        }
         public void ticboard1() 
         {
             for (int i = 1; i<=7;i++)
@@ -44,19 +88,18 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     /* - */
                     if ((i%2)==1 )
                     {
-                        Console.Write("-");
+                        Write("-");
                     }
                     else if ((j % 2) == 0) /*j == 2 || j == 4 || j == 6 */
                     {
-                        Console.Write(" ");
+                        Write(" ");
                     }
                     else
                     {
                        
-                        Console.Write("|");
+                        Write("|");
 
                     }
-
                 }
                 WriteLine();
             }
@@ -128,7 +171,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
 
-    class Player{
+    class Player : Game{
 
     }
 
