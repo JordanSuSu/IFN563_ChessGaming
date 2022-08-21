@@ -12,15 +12,23 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            WriteLine("Please enter which game mode u want to play:\n1.play with human\n2.play with computer");
             Game game = new Game();
-            game.setNewGame(Convert.ToInt16(ReadLine()));
-            
+            Board board = new Board();
+            // let user to select which type of game he/she want to play
+            WriteLine("Please enter which game you want to play:\n1.Wild tic-tac-toe\n2.Reversi aka Othello");
+            game = game.setGameType(ReadLine(), game);
+
+            // let user to select which game mode he/she want to play
+            WriteLine("Please enter which game mode u want to play:\n1.play with human\n2.play with computer");
+            game = game.setGameMode(ReadLine(), game);
+            WriteLine($"You choose {game.CurGameType} and the game mode is {game.CurGameMode}");
+            board.drawBoard(game);
         }
     }
 
     class Game {
         private string str_CurGameMode = (GameMode.hvh).ToString();
+        private string str_CurGameType = (GameType.tictactoe).ToString();
         // public Board board = new Board();
         protected enum GameMode{
             //human vs human
@@ -39,19 +47,41 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             get{ return str_CurGameMode; }
             set
             {
-                str_CurGameMode = ((GameMode)Convert.ToInt16(value)-1).ToString();
-                WriteLine(str_CurGameMode + " - " + GameMode.hvh);
+                str_CurGameMode = ((GameMode)Convert.ToInt32(value)).ToString();
             }
         }
 
-        public Board setNewGame(int mode){
-            //check whether the input value is a valid number of game mode
-            while ( mode != (int)GameMode.cvh || mode != (int)GameMode.hvh ){
-                WriteLine("Please re-enter a valid number of game mode u want to play:\n1.play with human\n2.play with computer");
-                mode = Convert.ToInt16(ReadLine());
+        public string CurGameType{
+            get{ return str_CurGameType; }
+            set
+            {
+                str_CurGameType = ((GameType)Convert.ToInt32(value)).ToString();
             }
-            Board board = new Board();
-            return board;
+        }
+
+        public Game setGameType(string value, Game game){
+            int num_type;
+            bool res = int.TryParse(value, out num_type);
+            // WriteLine(res + "--" + (num_type == (int)GameType.reversi || num_type == (int)GameType.tictactoe));
+            while (!(res && (num_type == (int)GameType.reversi || num_type == (int)GameType.tictactoe))){
+                WriteLine("Please re-enter a valid number of game you want to play:\n1.Wild tic-tac-toe\n2.Reversi aka Othello");
+                res = int.TryParse(ReadLine(), out num_type);
+            }
+
+            game.str_CurGameType = ((GameType)num_type).ToString();
+            return game;
+        }
+        public Game setGameMode(string value, Game game){
+            //check whether the input value is a valid number of game mode
+            int num_mode;
+            bool res = int.TryParse(value, out num_mode);
+            while ( !(res && (num_mode == (int)GameMode.cvh || num_mode == (int)GameMode.hvh)) ){
+                WriteLine("Please re-enter a valid number of game mode u want to play:\n1.play with human\n2.play with computer");
+                res = int.TryParse(ReadLine(), out num_mode);
+            }
+            // WriteLine(num_mode);
+            game.str_CurGameMode = ((GameMode)num_mode).ToString();
+            return game;
         }
     
     }
@@ -75,9 +105,31 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          * | >> 
          * " " >> 2,4,6
          */
+        // display the current state of board
+        public void drawBoard(Game game){
+            int max = game.CurGameType == (GameType.tictactoe).ToString() ? 7 : 17 ;
+            for (int i = 1; i <= max; i++)
+            {
+                for (int j = 1; j <= max; j++)
+                {
+                    /* - */
+                    if ((i%2)==1 )
+                    {
+                        Write("-");
+                    }
+                    else if ((j % 2) == 0) /*j == 2 || j == 4 || j == 6 */
+                    {
+                        Write(" ");
+                    }
+                    else
+                    {
+                       
+                        Write("|");
 
-        public void drawBoard(){
-
+                    }
+                }
+                WriteLine();
+            }
         }
         public void ticboard1() 
         {
@@ -181,5 +233,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
     class Computer : Player{
         
+    }
+
+    class Hint : Game {
+
     }
 }
