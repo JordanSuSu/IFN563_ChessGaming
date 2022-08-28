@@ -5,6 +5,7 @@
 // Console.WriteLine("Jordan")
 
 using System;
+using System.Diagnostics.Metrics;
 using static System.Console;
 namespace ChessGame // Note: actual namespace depends on the project name.
 {
@@ -86,7 +87,207 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     
     }
 
-    class Board : Game {
+    class Move
+    {
+        // check valid move
+        public int tic_rowinput(int chessstatus)
+        {
+            Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
+            string rowinput = Console.ReadLine();
+
+            bool rowresult = Int32.TryParse(rowinput, out tic_rowcoordiantes);
+            int i = Array.BinarySearch(tic_row, tic_rowcoordiantes);
+
+
+            while (rowresult == false || i < 0)
+            {
+                Console.Write("please enter a valid row coordiantes: ");
+                rowresult = Int32.TryParse(ReadLine(), out tic_rowcoordiantes);
+                i = Array.BinarySearch(tic_row, tic_rowcoordiantes);
+            }
+
+            return tic_rowcoordiantes;
+        }
+        public int tic_colinput(int chessstatus)
+        {
+            Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
+            string colinput = Console.ReadLine();
+
+            bool colresult = Int32.TryParse(colinput, out tic_colcoordiantes);
+            int j = Array.BinarySearch(tic_col, tic_colcoordiantes);
+
+            while (colresult == false || j < 0)
+            {
+                Console.Write("please enter a valid column coordiantes: ");
+                colresult = Int32.TryParse(ReadLine(), out tic_colcoordiantes);
+                j = Array.BinarySearch(tic_col, tic_colcoordiantes);
+            }
+
+            return tic_colcoordiantes;
+        }
+
+        public int reversi_rowinput(int chessstatus)
+        {
+            Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
+            string rowinput = Console.ReadLine();
+            bool rowresult = Int32.TryParse(rowinput, out reversi_rowcoordiantes);
+            int i = Array.BinarySearch(reversi_row, reversi_rowcoordiantes);
+
+
+            while (rowresult == false || i < 0)
+            {
+                Console.Write("please enter a valid row coordiantes: ");
+                rowresult = Int32.TryParse(ReadLine(), out reversi_rowcoordiantes);
+                i = Array.BinarySearch(reversi_row, reversi_rowcoordiantes);
+            }
+
+            return reversi_rowcoordiantes;
+        }
+        public int reversi_colinput(int chessstatus)
+        {
+            Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
+            string colinput = Console.ReadLine();
+            bool colresult = Int32.TryParse(colinput, out reversi_colcoordiantes);
+            int j = Array.BinarySearch(reversi_col, reversi_colcoordiantes);
+
+            while (colresult == false || j < 0)
+            {
+
+                Console.Write("please enter a valid column coordiantes: ");
+                colresult = Int32.TryParse(ReadLine(), out reversi_colcoordiantes);
+                j = Array.BinarySearch(reversi_col, reversi_colcoordiantes);
+            }
+
+            return reversi_colcoordiantes;
+        }
+
+        public int checkresult(int t_row, int t_col, int chessstatus)
+        {
+            //disgoanl
+            if (t_row == 2 && t_col == 2)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                else
+                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+            }
+            else if (t_row == 2 && t_col == 6)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                else
+                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+            }
+            else if (t_row == 4 && t_col == 4)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                else
+                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+            }
+            else if (t_row == 6 && t_col == 2)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter1++; Console.WriteLine("diagonalcounter1" + diagonalcounter1); }
+                else
+                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+            }
+            else if (t_row == 6 && t_col == 6)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                else
+                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+            }
+
+            //row
+            if (t_row == 2)
+            {
+                if (chessstatus == 1)
+                { rowcounter1++; Console.WriteLine("rowcounter1 " + rowcounter1); }
+                else
+                { rowcounter2++; Console.WriteLine("rowcounter2 " + rowcounter2); }
+            }
+            else if (t_row == 4)
+            {
+                if (chessstatus == 1)
+                { rowcounter1++; Console.WriteLine("rowcounter1 " + rowcounter1); }
+                else
+                { rowcounter2++; Console.WriteLine("rowcounter2 " + rowcounter2); }
+            }
+            else if (t_row == 6)
+            {
+                if (chessstatus == 1)
+                { rowcounter1++; Console.WriteLine("rowcounter1 " + rowcounter1); }
+                else
+                { rowcounter2++; Console.WriteLine("rowcounter2 " + rowcounter2); }
+            }
+
+            // col
+            if (t_col == 2)
+            {
+                if (chessstatus == 1)
+                { colcounter1++; Console.WriteLine(" colcounter1 " + colcounter1); }
+                else
+                { colcounter2++; Console.WriteLine("colcounter2" + colcounter2); }
+            }
+            else if (t_col == 4)
+            {
+                if (chessstatus == 1)
+                { colcounter1++; Console.WriteLine(" colcounter1 " + colcounter1); }
+                else
+                { colcounter2++; Console.WriteLine("colcounter2 " + colcounter2); }
+            }
+            else if (t_col == 6)
+            {
+                if (chessstatus == 1)
+                { colcounter1++; Console.WriteLine(" colcounter1 " + colcounter1); }
+                else
+                { colcounter2++; Console.WriteLine("colcounter2 " + colcounter2); }
+            }
+
+            if (diagonalcounter1 == 3)
+            { return 1; }
+            else if (diagonalcounter2 == 3)
+            { return 2; }
+            else if (rowcounter1 == 3)
+            { return 3; }
+            else if (rowcounter2 == 3)
+                return 4;
+            else if (colcounter1 == 3)
+                return 5;
+            else if (colcounter2 == 3)
+                return 6;
+
+            return 0;
+        }
+
+
+
+        //Array.Sort(Sportathon.row);
+        //Array.Sort(Sportathon.column);
+        // row --, column ||
+
+        public static int[] tic_row = { 2, 4, 6 };
+        public static int[] tic_col = { 2, 4, 6 };
+
+        public static int[] reversi_row = { 2, 4, 6, 8, 10, 12, 14, 16 };
+        public static int[] reversi_col = { 2, 4, 6, 8, 10, 12, 14, 16 };
+        public static int tic_rowcoordiantes;
+        public static int tic_colcoordiantes;
+        public static int reversi_rowcoordiantes;
+        public static int reversi_colcoordiantes;
+        public static int diagonalcounter1 = 0;
+        public static int diagonalcounter2 = 0;
+        public static int rowcounter1 = 0;
+        public static int rowcounter2 = 0;
+        public static int colcounter1 = 0;
+        public static int colcounter2 = 0;
+
+    }
+
+    class Board : Game
+    {
         
          /* 
            # 1 -------
@@ -131,29 +332,62 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 WriteLine();
             }
         }
-        public void ticboard1() 
+        public void ticboard1(int[] t_row, int[] t_col, int[] chessstatus, List<int> cooridnates)
         {
-            for (int i = 1; i<=7;i++)
+
+            for (int i = 1; i <= 7; i++)
             {
-                for (int j = 1; j<=7;j++)
+                for (int j = 1; j <= 7; j++)
                 {
-                    /* - */
-                    if ((i%2)==1 )
+
+                    /* row - */
+                    if ((i % 2) != 0)
                     {
                         Write("-");
                     }
-                    else if ((j % 2) == 0) /*j == 2 || j == 4 || j == 6 */
+                    else if ((j % 2) == 0) /* 2,2 4,4  6,6 */
                     {
-                        Write(" ");
+                        while (k < cooridnates.Count)
+                        {
+                            if (cooridnates[k] == i && cooridnates[k + 1] == j)
+                                if (cooridnates[k + 1] == 2)
+                                { Write("X"); }
+                                else
+                                { Write("O"); }
+                            else
+                            { Write(" "); }
+
+                            k = k - 2;
+                        }
+
+                        // BUG is here
+                        /*if (t_row[i] == i && t_col[j] == j)
+                        {
+                            if (t_col[i] == 2)
+                            { Write("O"); }
+                            else
+                            { Write("X"); }
+
+                        }
+                        //
+                        else
+                        { Write("{0}",counter++); }*/
                     }
-                    else
+                    else if ((j % 2) != 0)
                     {
-                       
+
                         Write("|");
 
                     }
+                    /*if (Move.tic_rowcoordiantes == i && Move.tic_colcoordiantes == j)
+                    { Write("O"); }*/
                 }
-                WriteLine();
+
+                WriteLine("");
+                if (i == 7)
+                {
+                    counter = 1;
+                }
             }
         }
         /* 
@@ -208,6 +442,15 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 }
                 WriteLine();
             }
+        }
+
+        public int counter = 1;
+        public int k = 0;
+        private List<int> rowcolstatuslist = new List<int>();
+        public List<int> Rowcolstatuslist
+        {
+            get { return rowcolstatuslist; }
+            set { rowcolstatuslist.Add(Convert.ToInt32(value)); }
         }
     }
 
