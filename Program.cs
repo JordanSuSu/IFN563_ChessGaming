@@ -391,6 +391,19 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
 
     class Player : Game{
+        public static int[] tic_row = { 2, 4, 6 };
+        public static int[] tic_col = { 2, 4, 6 };
+
+        public static int[] reversi_row = { 2, 4, 6, 8, 10, 12, 14, 16 };
+        public static int[] reversi_col = { 2, 4, 6, 8, 10, 12, 14, 16 };
+
+        public static int tic_rowcoordiantes;
+        public static int tic_colcoordiantes;
+        public static int reversi_rowcoordiantes;
+        public static int reversi_colcoordiantes;
+    }
+
+    class Human : Player{
         public int tic_rowinput(int chessstatus)
         {
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
@@ -461,19 +474,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             return reversi_colcoordiantes;
         }
-        public static int[] tic_row = { 2, 4, 6 };
-        public static int[] tic_col = { 2, 4, 6 };
-
-        public static int[] reversi_row = { 2, 4, 6, 8, 10, 12, 14, 16 };
-        public static int[] reversi_col = { 2, 4, 6, 8, 10, 12, 14, 16 };
-
-        public static int tic_rowcoordiantes;
-        public static int tic_colcoordiantes;
-        public static int reversi_rowcoordiantes;
-        public static int reversi_colcoordiantes;
-    }
-
-    class Human : Player{
+        
 
     }
 
