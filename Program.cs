@@ -90,19 +90,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     class Move
     {
         // check valid move
-       
+
 
         public int checkresult(int t_row, int t_col, int chessstatus)
         {
-            //disgoanl
+            //diagoanl 2,2 / 4,4 / 6,6
             if (t_row == 2 && t_col == 2)
-            {
-                if (chessstatus == 1)
-                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
-                else
-                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
-            }
-            else if (t_row == 2 && t_col == 6)
             {
                 if (chessstatus == 1)
                 { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
@@ -116,13 +109,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 else
                 { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
             }
-            else if (t_row == 6 && t_col == 2)
-            {
-                if (chessstatus == 1)
-                { diagonalcounter1++; Console.WriteLine("diagonalcounter1" + diagonalcounter1); }
-                else
-                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
-            }
             else if (t_row == 6 && t_col == 6)
             {
                 if (chessstatus == 1)
@@ -130,65 +116,109 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 else
                 { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
             }
+            //diagoanl 2,6 / 4,4 / 6,2
+            if (t_row == 2 && t_col == 6)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter3++; Console.WriteLine("diagonalcounter3 " + diagonalcounter3); }
+                else
+                { diagonalcounter4++; Console.WriteLine("diagonalcounter4 " + diagonalcounter4); }
+            }
+            else if (t_row == 6 && t_col == 2)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter3++; Console.WriteLine("diagonalcounter3 " + diagonalcounter3); }
+                else
+                { diagonalcounter4++; Console.WriteLine("diagonalcounter4 " + diagonalcounter4); }
+            }
+            else if (t_row == 4 && t_col == 4)
+            {
+                if (chessstatus == 1)
+                { diagonalcounter3++; Console.WriteLine("diagonalcounter3 " + diagonalcounter3); }
+                else
+                { diagonalcounter4++; Console.WriteLine("diagonalcounter4 " + diagonalcounter4); }
+            }
 
             //row
             if (t_row == 2)
             {
                 if (chessstatus == 1)
-                { rowcounter1++; Console.WriteLine("rowcounter1 " + rowcounter1); }
+                { row2counter1++; Console.WriteLine("row2counter1 " + row2counter1); }
                 else
-                { rowcounter2++; Console.WriteLine("rowcounter2 " + rowcounter2); }
+                { row2counter2++; Console.WriteLine("row2counter2 " + row2counter2); }
             }
             else if (t_row == 4)
             {
                 if (chessstatus == 1)
-                { rowcounter1++; Console.WriteLine("rowcounter1 " + rowcounter1); }
+                { row4counter1++; Console.WriteLine("row4counter1 " + row4counter1); }
                 else
-                { rowcounter2++; Console.WriteLine("rowcounter2 " + rowcounter2); }
+                { row4counter2++; Console.WriteLine("row4counter2 " + row4counter2); }
             }
             else if (t_row == 6)
             {
                 if (chessstatus == 1)
-                { rowcounter1++; Console.WriteLine("rowcounter1 " + rowcounter1); }
+                { row6counter1++; Console.WriteLine("row6counter1 " + row6counter1); }
                 else
-                { rowcounter2++; Console.WriteLine("rowcounter2 " + rowcounter2); }
+                { row6counter2++; Console.WriteLine("row6counter2 " + row6counter2); }
             }
 
             // col
             if (t_col == 2)
             {
                 if (chessstatus == 1)
-                { colcounter1++; Console.WriteLine(" colcounter1 " + colcounter1); }
+                { col2counter1++; Console.WriteLine("col2counter1 " + col2counter1); }
                 else
-                { colcounter2++; Console.WriteLine("colcounter2" + colcounter2); }
+                { col2counter2++; Console.WriteLine("col2counter2 " + col2counter2); }
             }
             else if (t_col == 4)
             {
                 if (chessstatus == 1)
-                { colcounter1++; Console.WriteLine(" colcounter1 " + colcounter1); }
+                { col4counter1++; Console.WriteLine("col4counter1 " + col4counter1); }
                 else
-                { colcounter2++; Console.WriteLine("colcounter2 " + colcounter2); }
+                { col4counter2++; Console.WriteLine("col4counter2 " + col4counter2); }
             }
             else if (t_col == 6)
             {
                 if (chessstatus == 1)
-                { colcounter1++; Console.WriteLine(" colcounter1 " + colcounter1); }
+                { col6counter1++; Console.WriteLine("col6counter1 " + col6counter1); }
                 else
-                { colcounter2++; Console.WriteLine("colcounter2 " + colcounter2); }
+                { col6counter2++; Console.WriteLine("col6counter2 " + col6counter2); }
             }
 
             if (diagonalcounter1 == 3)
-            { return 1; }
+            { Console.WriteLine("Player 1 Win "); return 1; }
             else if (diagonalcounter2 == 3)
-            { return 2; }
-            else if (rowcounter1 == 3)
-            { return 3; }
-            else if (rowcounter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else if (diagonalcounter3 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (diagonalcounter4 == 3)
                 return 4;
-            else if (colcounter1 == 3)
-                return 5;
-            else if (colcounter2 == 3)
-                return 6;
+            else if (row2counter1 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (row4counter1 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (row6counter1 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (row2counter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else if (row4counter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else if (row6counter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else if (col2counter1 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (col4counter1 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (col6counter1 == 3)
+            { Console.WriteLine("Player 1 Win "); return 1; }
+            else if (col2counter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else if (col4counter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else if (col6counter2 == 3)
+            { Console.WriteLine("Player 2 Win "); return 2; }
+            else
+            { Console.WriteLine("drawn game"); }
 
             return 0;
         }
@@ -199,14 +229,38 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         //Array.Sort(Sportathon.column);
         // row --, column ||
 
-        
-        
+
+
+        public static int[] tic_row = { 2, 4, 6 };
+        public static int[] tic_col = { 2, 4, 6 };
+
+        public static int[] reversi_row = { 2, 4, 6, 8, 10, 12, 14, 16 };
+        public static int[] reversi_col = { 2, 4, 6, 8, 10, 12, 14, 16 };
+
+        public static int tic_rowcoordiantes;
+        public static int tic_colcoordiantes;
+        public static int reversi_rowcoordiantes;
+        public static int reversi_colcoordiantes;
+
         public static int diagonalcounter1 = 0;
         public static int diagonalcounter2 = 0;
-        public static int rowcounter1 = 0;
-        public static int rowcounter2 = 0;
-        public static int colcounter1 = 0;
-        public static int colcounter2 = 0;
+        public static int diagonalcounter3 = 0;
+        public static int diagonalcounter4 = 0;
+
+
+        public static int row2counter1 = 0;
+        public static int row4counter1 = 0;
+        public static int row6counter1 = 0;
+        public static int row2counter2 = 0;
+        public static int row4counter2 = 0;
+        public static int row6counter2 = 0;
+
+        public static int col2counter1 = 0;
+        public static int col4counter1 = 0;
+        public static int col6counter1 = 0;
+        public static int col2counter2 = 0;
+        public static int col4counter2 = 0;
+        public static int col6counter2 = 0;
 
     }
 
@@ -256,63 +310,106 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 WriteLine();
             }
         }
-        public void ticboard1(int[] t_row, int[] t_col, int[] chessstatus, List<int> cooridnates)
+
+        public int transferrowcoltobox(int row, int col, int status)
+        {
+            if (row == 2 && col == 2)
+            {
+                if (status == 2)
+                { coordiante[0] = "O"; }
+                else if (status == 1)
+                { coordiante[0] = "X"; }
+                else
+                { coordiante[0] = " "; }
+            }
+            else if (row == 2 && col == 4)
+            {
+                if (status == 2)
+                { coordiante[1] = "O"; }
+                else if (status == 1)
+                { coordiante[1] = "X"; }
+                else
+                { coordiante[1] = " "; }
+            }
+            else if (row == 2 && col == 6)
+            {
+                if (status == 2)
+                { coordiante[2] = "O"; }
+                else if (status == 1)
+                { coordiante[2] = "X"; }
+                else
+                { coordiante[2] = " "; }
+            }
+            else if (row == 4 && col == 2)
+            {
+                if (status == 2)
+                { coordiante[3] = "O"; }
+                else if (status == 1)
+                { coordiante[3] = "X"; }
+                else
+                { coordiante[3] = " "; }
+            }
+            else if (row == 4 && col == 4)
+            {
+                if (status == 2)
+                { coordiante[4] = "O"; }
+                else if (status == 1)
+                { coordiante[4] = "X"; }
+                else
+                { coordiante[4] = " "; }
+            }
+            else if (row == 4 && col == 6)
+            {
+                if (status == 2)
+                { coordiante[5] = "O"; }
+                else if (status == 1)
+                { coordiante[5] = "X"; }
+                else
+                { coordiante[5] = " "; }
+            }
+            else if (row == 6 && col == 2)
+            {
+                if (status == 2)
+                { coordiante[6] = "O"; }
+                else if ((status == 1))
+                { coordiante[6] = "X"; }
+                else
+                { coordiante[6] = " "; }
+            }
+            else if (row == 6 && col == 4)
+            {
+                if (status == 2)
+                { coordiante[7] = "O"; }
+                else if ((status == 1))
+                { coordiante[7] = "X"; }
+                else
+                { coordiante[7] = " "; }
+            }
+            else if (row == 6 && col == 6)
+            {
+                if (status == 2)
+                { coordiante[8] = "O"; }
+                else if ((status == 1))
+                { coordiante[8] = "X"; }
+                else
+                { coordiante[8] = " "; }
+            }
+
+
+            return 0;
+        }
+        public void ticboard1()
         {
 
-            for (int i = 1; i <= 7; i++)
-            {
-                for (int j = 1; j <= 7; j++)
-                {
+            Console.WriteLine("-----------");
+            Console.WriteLine("| {0} | {1} | {2} |", coordiante[0], coordiante[1], coordiante[2]);
+            Console.WriteLine("-----------");
+            Console.WriteLine("| {0} | {1} | {2} |", coordiante[3], coordiante[4], coordiante[5]);
+            Console.WriteLine("-----------");
+            Console.WriteLine("| {0} | {1} | {2} |", coordiante[6], coordiante[7], coordiante[8]);
+            Console.WriteLine("-----------");
 
-                    /* row - */
-                    if ((i % 2) != 0)
-                    {
-                        Write("-");
-                    }
-                    else if ((j % 2) == 0) /* 2,2 4,4  6,6 */
-                    {
-                        while (k < cooridnates.Count)
-                        {
-                            if (cooridnates[k] == i && cooridnates[k + 1] == j)
-                                if (cooridnates[k + 1] == 2)
-                                { Write("X"); }
-                                else
-                                { Write("O"); }
-                            else
-                            { Write(" "); }
 
-                            k = k - 2;
-                        }
-
-                        // BUG is here
-                        /*if (t_row[i] == i && t_col[j] == j)
-                        {
-                            if (t_col[i] == 2)
-                            { Write("O"); }
-                            else
-                            { Write("X"); }
-
-                        }
-                        //
-                        else
-                        { Write("{0}",counter++); }*/
-                    }
-                    else if ((j % 2) != 0)
-                    {
-
-                        Write("|");
-
-                    }
-                    /*if (Move.tic_rowcoordiantes == i && Move.tic_colcoordiantes == j)
-                    { Write("O"); }*/
-                }
-
-                WriteLine("");
-                if (i == 7)
-                {
-                    counter = 1;
-                }
-            }
         }
         /* 
            # 1  -----------------
@@ -370,6 +467,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         public int counter = 1;
         public int k = 0;
+        public static string[] coordiante = new string[9];
         private List<int> rowcolstatuslist = new List<int>();
         public List<int> Rowcolstatuslist
         {
