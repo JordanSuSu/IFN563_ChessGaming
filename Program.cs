@@ -23,7 +23,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             WriteLine("Please enter which game mode u want to play:\n1.play with human\n2.play with computer");
             game = game.setGameMode(ReadLine(), game);
             WriteLine($"You choose {game.CurGameType} and the game mode is {game.CurGameMode}");
-            board.drawBoard(game);
+            //board.drawBoard(game);
         }
     }
 
@@ -285,114 +285,89 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          * " " >> 2,4,6
          */
         // display the current state of board
-        public void drawBoard(Game game){
-            int max = game.CurGameType == (GameType.tictactoe).ToString() ? 7 : 17 ;
-            for (int i = 1; i <= max; i++)
-            {
-                for (int j = 1; j <= max; j++)
-                {
-                    /* - */
-                    if ((i%2)==1 )
-                    {
-                        Write("-");
-                    }
-                    else if ((j % 2) == 0) /*j == 2 || j == 4 || j == 6 */
-                    {
-                        Write(" ");
-                    }
-                    else
-                    {
-                       
-                        Write("|");
-
-                    }
-                }
-                WriteLine();
-            }
-        }
-
+        
         public int transferrowcoltobox(int row, int col, int status)
         {
             if (row == 2 && col == 2)
             {
                 if (status == 2)
-                { coordiante[0] = "O"; }
+                { tic_coordiante[0] = "O"; }
                 else if (status == 1)
-                { coordiante[0] = "X"; }
+                { tic_coordiante[0] = "X"; }
                 else
-                { coordiante[0] = " "; }
+                { tic_coordiante[0] = " "; }
             }
             else if (row == 2 && col == 4)
             {
                 if (status == 2)
-                { coordiante[1] = "O"; }
+                { tic_coordiante[1] = "O"; }
                 else if (status == 1)
-                { coordiante[1] = "X"; }
+                { tic_coordiante[1] = "X"; }
                 else
-                { coordiante[1] = " "; }
+                { tic_coordiante[1] = " "; }
             }
             else if (row == 2 && col == 6)
             {
                 if (status == 2)
-                { coordiante[2] = "O"; }
+                { tic_coordiante[2] = "O"; }
                 else if (status == 1)
-                { coordiante[2] = "X"; }
+                { tic_coordiante[2] = "X"; }
                 else
-                { coordiante[2] = " "; }
+                { tic_coordiante[2] = " "; }
             }
             else if (row == 4 && col == 2)
             {
                 if (status == 2)
-                { coordiante[3] = "O"; }
+                { tic_coordiante[3] = "O"; }
                 else if (status == 1)
-                { coordiante[3] = "X"; }
+                { tic_coordiante[3] = "X"; }
                 else
-                { coordiante[3] = " "; }
+                { tic_coordiante[3] = " "; }
             }
             else if (row == 4 && col == 4)
             {
                 if (status == 2)
-                { coordiante[4] = "O"; }
+                { tic_coordiante[4] = "O"; }
                 else if (status == 1)
-                { coordiante[4] = "X"; }
+                { tic_coordiante[4] = "X"; }
                 else
-                { coordiante[4] = " "; }
+                { tic_coordiante[4] = " "; }
             }
             else if (row == 4 && col == 6)
             {
                 if (status == 2)
-                { coordiante[5] = "O"; }
+                { tic_coordiante[5] = "O"; }
                 else if (status == 1)
-                { coordiante[5] = "X"; }
+                { tic_coordiante[5] = "X"; }
                 else
-                { coordiante[5] = " "; }
+                { tic_coordiante[5] = " "; }
             }
             else if (row == 6 && col == 2)
             {
                 if (status == 2)
-                { coordiante[6] = "O"; }
+                { tic_coordiante[6] = "O"; }
                 else if ((status == 1))
-                { coordiante[6] = "X"; }
+                { tic_coordiante[6] = "X"; }
                 else
-                { coordiante[6] = " "; }
+                { tic_coordiante[6] = " "; }
             }
             else if (row == 6 && col == 4)
             {
                 if (status == 2)
-                { coordiante[7] = "O"; }
+                { tic_coordiante[7] = "O"; }
                 else if ((status == 1))
-                { coordiante[7] = "X"; }
+                { tic_coordiante[7] = "X"; }
                 else
-                { coordiante[7] = " "; }
+                { tic_coordiante[7] = " "; }
             }
             else if (row == 6 && col == 6)
             {
                 if (status == 2)
-                { coordiante[8] = "O"; }
+                { tic_coordiante[8] = "O"; }
                 else if ((status == 1))
-                { coordiante[8] = "X"; }
+                { tic_coordiante[8] = "X"; }
                 else
-                { coordiante[8] = " "; }
+                { tic_coordiante[8] = " "; }
             }
 
 
@@ -402,13 +377,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
 
             Console.WriteLine("-----------");
-            Console.WriteLine("| {0} | {1} | {2} |", coordiante[0], coordiante[1], coordiante[2]);
+            Console.WriteLine("| {0} | {1} | {2} |", tic_coordiante[0], tic_coordiante[1], tic_coordiante[2]);
             Console.WriteLine("-----------");
-            Console.WriteLine("| {0} | {1} | {2} |", coordiante[3], coordiante[4], coordiante[5]);
+            Console.WriteLine("| {0} | {1} | {2} |", tic_coordiante[3], tic_coordiante[4], tic_coordiante[5]);
             Console.WriteLine("-----------");
-            Console.WriteLine("| {0} | {1} | {2} |", coordiante[6], coordiante[7], coordiante[8]);
+            Console.WriteLine("| {0} | {1} | {2} |", tic_coordiante[6], tic_coordiante[7], tic_coordiante[8]);
             Console.WriteLine("-----------");
-
 
         }
         /* 
@@ -467,7 +441,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         public int counter = 1;
         public int k = 0;
-        public static string[] coordiante = new string[9];
+        public static string[] tic_coordiante = new string[9];
         private List<int> rowcolstatuslist = new List<int>();
         public List<int> Rowcolstatuslist
         {
