@@ -13,6 +13,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
             Game game = new Game();
             Board board = new Board();
             // let user to select which type of game he/she want to play
@@ -42,7 +43,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         private Move move = new Move();
         private string str_CurGameMode = (GameMode.hvh).ToString();
-        private string str_CurGameType = (GameType.tictactoe).ToString();
+        private string str_CurGameType = (GameType.reversi).ToString();
         // public Board board = new Board();
         protected enum GameMode{
             //human vs human
@@ -127,6 +128,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             //gm: current game mode
             //gt: current game type
 
+            board.initialChessBoard(game);
             bool res = false;
             //assume that player1 always be the first player
             player_list[0].reversi_rowinput(1);
@@ -147,7 +149,20 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 }
                 
             }else{
-
+                while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.reversi] ){
+                    int row = player_list[this.getPlayerNum(game.num_ChessMove)].reversi_rowinput(this.getPlayerNum(game.num_ChessMove));
+                    int col = player_list[this.getPlayerNum(game.num_ChessMove)].reversi_colinput(this.getPlayerNum(game.num_ChessMove));
+                    board.transferrowcoltobox(
+                        row,
+                        col,
+                        this.getPlayerNum(game.num_ChessMove)
+                        );
+                    board.reversiboard1();
+                    // int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
+                    int num_GameRes = 0;
+                    if ( num_GameRes != 0 ) break;
+                    game.changeStatus(game, 1);
+                }
             }
             return res;
         }
@@ -377,93 +392,99 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         
         public int transferrowcoltobox(int row, int col, int status)
         {
+            WriteLine($"[Transferrowcoltobox]:{status}");
             //Tic Tac Toe
             if (this.CurGameType == (GameType.tictactoe).ToString()){
                 if (row == 2 && col == 2)
                 {
                     if (status == 2)
-                    { tic_coordiante[0] = "O"; }
+                    { tic_c[0] = "\u202FO\u202F"; }
                     else if (status == 1)
-                    { tic_coordiante[0] = "X"; }
+                    { tic_c[0] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[0] = " "; }
+                    { tic_c[0] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 2 && col == 4)
                 {
                     if (status == 2)
-                    { tic_coordiante[1] = "O"; }
+                    { tic_c[1] = "\u202FO\u202F"; }
                     else if (status == 1)
-                    { tic_coordiante[1] = "X"; }
+                    { tic_c[1] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[1] = " "; }
+                    { tic_c[1] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 2 && col == 6)
                 {
                     if (status == 2)
-                    { tic_coordiante[2] = "O"; }
+                    { tic_c[2] = "\u202FO\u202F"; }
                     else if (status == 1)
-                    { tic_coordiante[2] = "X"; }
+                    { tic_c[2] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[2] = " "; }
+                    { tic_c[2] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 4 && col == 2)
                 {
                     if (status == 2)
-                    { tic_coordiante[3] = "O"; }
+                    { tic_c[3] = "\u202FO\u202F"; }
                     else if (status == 1)
-                    { tic_coordiante[3] = "X"; }
+                    { tic_c[3] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[3] = " "; }
+                    { tic_c[3] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 4 && col == 4)
                 {
                     if (status == 2)
-                    { tic_coordiante[4] = "O"; }
+                    { tic_c[4] = "\u202FO\u202F"; }
                     else if (status == 1)
-                    { tic_coordiante[4] = "X"; }
+                    { tic_c[4] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[4] = " "; }
+                    { tic_c[4] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 4 && col == 6)
                 {
                     if (status == 2)
-                    { tic_coordiante[5] = "O"; }
+                    { tic_c[5] = "\u202FO\u202F"; }
                     else if (status == 1)
-                    { tic_coordiante[5] = "X"; }
+                    { tic_c[5] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[5] = " "; }
+                    { tic_c[5] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 6 && col == 2)
                 {
                     if (status == 2)
-                    { tic_coordiante[6] = "O"; }
+                    { tic_c[6] = "\u202FO\u202F"; }
                     else if ((status == 1))
-                    { tic_coordiante[6] = "X"; }
+                    { tic_c[6] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[6] = " "; }
+                    { tic_c[6] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 6 && col == 4)
                 {
                     if (status == 2)
-                    { tic_coordiante[7] = "O"; }
+                    { tic_c[7] = "\u202FO\u202F"; }
                     else if ((status == 1))
-                    { tic_coordiante[7] = "X"; }
+                    { tic_c[7] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[7] = " "; }
+                    { tic_c[7] = "\u202F\u202F\u202F"; }
                 }
                 else if (row == 6 && col == 6)
                 {
                     if (status == 2)
-                    { tic_coordiante[8] = "O"; }
+                    { tic_c[8] = "\u202FO\u202F"; }
                     else if ((status == 1))
-                    { tic_coordiante[8] = "X"; }
+                    { tic_c[8] = "\u202FX\u202F"; }
                     else
-                    { tic_coordiante[8] = " "; }
+                    { tic_c[8] = "\u202F\u202F\u202F"; }
                 }
             }else{
-
+                int cal_row = (row / 2)-1;
+                int cal_col = (col / 2)-1;
+                int index = cal_row*8 + cal_col;
+                reversi_c[index] = status == 2 ? "\u202F\u25CB\u202F" : status == 1 ? "\u202F\u25CF\u202F" : "\u202F\u202F\u202F";
             }
             
+            // 25CB white circle
+            // 25CF black circle
 
 
             return 0;
@@ -471,13 +492,13 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public void ticboard1()
         {
 
-            Console.WriteLine("\u250c\u2500\u2500\u252c\u2500\u2500\u252c\u2500\u2500\u2510");
-            Console.WriteLine("\u2502\u2502\u2502 {2} \u2502", tic_coordiante[0], tic_coordiante[1], tic_coordiante[2]);
-            Console.WriteLine("\u251c\u2500\u2500\u253c\u2500\u2500\u253c\u2500\u2500\u2524");
-            Console.WriteLine("\u2502 {0} \u2502 {1} \u2502 {2} \u2502", tic_coordiante[3], tic_coordiante[4], tic_coordiante[5]);
-            Console.WriteLine("\u251c\u2500\u2500\u253c\u2500\u2500\u253c\u2500\u2500\u2524");
-            Console.WriteLine("\u2502 {0} \u2502 {1} \u2502 {2} \u2502", tic_coordiante[6], tic_coordiante[7], tic_coordiante[8]);
-            Console.WriteLine("\u2514\u2500\u2500\u2534\u2500\u2500\u2534\u2500\u2500\u2518");
+            Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_c[0], tic_c[1], tic_c[2]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_c[3], tic_c[4], tic_c[5]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_c[6], tic_c[7], tic_c[8]);
+            Console.WriteLine("\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2518");
 
         }
         /* 
@@ -510,10 +531,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public void initialreversi()
         {
 
-            reversi_c[27] = "O";
-            reversi_c[28] = "O";
-            reversi_c[35] = "X";
-            reversi_c[36] = "X";
+            reversi_c[27] = "\u202FO\u202F";
+            reversi_c[28] = "\u202FO\u202F";
+            reversi_c[35] = "\u202FX\u202F";
+            reversi_c[36] = "\u202FX\u202F";
 
         }
 
@@ -522,578 +543,578 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             if (row == 2 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[0] = "O"; }
+                { reversi_c[0] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[0] = "X"; }
+                { reversi_c[0] = "\u202FX\u202F"; }
                 else
-                { reversi_c[0] = " "; }
+                { reversi_c[0] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[1] = "O"; }
+                { reversi_c[1] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[1] = "X"; }
+                { reversi_c[1] = "\u202FX\u202F"; }
                 else
-                { reversi_c[1] = " "; }
+                { reversi_c[1] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[2] = "O"; }
+                { reversi_c[2] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[2] = "X"; }
+                { reversi_c[2] = "\u202FX\u202F"; }
                 else
-                { reversi_c[2] = " "; }
+                { reversi_c[2] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[3] = "O"; }
+                { reversi_c[3] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[3] = "X"; }
+                { reversi_c[3] = "\u202FX\u202F"; }
                 else
-                { reversi_c[3] = " "; }
+                { reversi_c[3] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[4] = "O"; }
+                { reversi_c[4] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[4] = "X"; }
+                { reversi_c[4] = "\u202FX\u202F"; }
                 else
-                { reversi_c[4] = " "; }
+                { reversi_c[4] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[5] = "O"; }
+                { reversi_c[5] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[5] = "X"; }
+                { reversi_c[5] = "\u202FX\u202F"; }
                 else
-                { reversi_c[5] = " "; }
+                { reversi_c[5] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[6] = "O"; }
+                { reversi_c[6] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[6] = "X"; }
+                { reversi_c[6] = "\u202FX\u202F"; }
                 else
-                { reversi_c[6] = " "; }
+                { reversi_c[6] = "\u202F\u202F\u202F"; }
             }
             else if (row == 2 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[7] = "O"; }
+                { reversi_c[7] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[7] = "X"; }
+                { reversi_c[7] = "\u202FX\u202F"; }
                 else
-                { reversi_c[7] = " "; }
+                { reversi_c[7] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[8] = "O"; }
+                { reversi_c[8] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[8] = "X"; }
+                { reversi_c[8] = "\u202FX\u202F"; }
                 else
-                { reversi_c[8] = " "; }
+                { reversi_c[8] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[9] = "O"; }
+                { reversi_c[9] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[9] = "X"; }
+                { reversi_c[9] = "\u202FX\u202F"; }
                 else
-                { reversi_c[9] = " "; }
+                { reversi_c[9] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[10] = "O"; }
+                { reversi_c[10] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[10] = "X"; }
+                { reversi_c[10] = "\u202FX\u202F"; }
                 else
-                { reversi_c[10] = " "; }
+                { reversi_c[10] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[11] = "O"; }
+                { reversi_c[11] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[11] = "X"; }
+                { reversi_c[11] = "\u202FX\u202F"; }
                 else
-                { reversi_c[11] = " "; }
+                { reversi_c[11] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[12] = "O"; }
+                { reversi_c[12] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[12] = "X"; }
+                { reversi_c[12] = "\u202FX\u202F"; }
                 else
-                { reversi_c[12] = " "; }
+                { reversi_c[12] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[13] = "O"; }
+                { reversi_c[13] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[13] = "X"; }
+                { reversi_c[13] = "\u202FX\u202F"; }
                 else
-                { reversi_c[13] = " "; }
+                { reversi_c[13] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[14] = "O"; }
+                { reversi_c[14] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[14] = "X"; }
+                { reversi_c[14] = "\u202FX\u202F"; }
                 else
-                { reversi_c[14] = " "; }
+                { reversi_c[14] = "\u202F\u202F\u202F"; }
             }
             else if (row == 4 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[16] = "O"; }
+                { reversi_c[16] = "\u202FO\u202F"; }
                 else if (status == 1)
-                { reversi_c[16] = "X"; }
+                { reversi_c[16] = "\u202FX\u202F"; }
                 else
-                { reversi_c[16] = " "; }
+                { reversi_c[16] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[17] = "O"; }
+                { reversi_c[17] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[17] = "X"; }
+                { reversi_c[17] = "\u202FX\u202F"; }
                 else
-                { reversi_c[17] = " "; }
+                { reversi_c[17] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[17] = "O"; }
+                { reversi_c[17] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[17] = "X"; }
+                { reversi_c[17] = "\u202FX\u202F"; }
                 else
-                { reversi_c[17] = " "; }
+                { reversi_c[17] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[18] = "O"; }
+                { reversi_c[18] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[18] = "X"; }
+                { reversi_c[18] = "\u202FX\u202F"; }
                 else
-                { reversi_c[18] = " "; }
+                { reversi_c[18] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[19] = "O"; }
+                { reversi_c[19] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[19] = "X"; }
+                { reversi_c[19] = "\u202FX\u202F"; }
                 else
-                { reversi_c[19] = " "; }
+                { reversi_c[19] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[20] = "O"; }
+                { reversi_c[20] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[20] = "X"; }
+                { reversi_c[20] = "\u202FX\u202F"; }
                 else
-                { reversi_c[20] = " "; }
+                { reversi_c[20] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[21] = "O"; }
+                { reversi_c[21] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[21] = "X"; }
+                { reversi_c[21] = "\u202FX\u202F"; }
                 else
-                { reversi_c[21] = " "; }
+                { reversi_c[21] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[22] = "O"; }
+                { reversi_c[22] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[22] = "X"; }
+                { reversi_c[22] = "\u202FX\u202F"; }
                 else
-                { reversi_c[22] = " "; }
+                { reversi_c[22] = "\u202F\u202F\u202F"; }
             }
             else if (row == 6 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[23] = "O"; }
+                { reversi_c[23] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[23] = "X"; }
+                { reversi_c[23] = "\u202FX\u202F"; }
                 else
-                { reversi_c[23] = " "; }
+                { reversi_c[23] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[24] = "O"; }
+                { reversi_c[24] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[24] = "X"; }
+                { reversi_c[24] = "\u202FX\u202F"; }
                 else
-                { reversi_c[24] = " "; }
+                { reversi_c[24] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[25] = "O"; }
+                { reversi_c[25] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[25] = "X"; }
+                { reversi_c[25] = "\u202FX\u202F"; }
                 else
-                { reversi_c[25] = " "; }
+                { reversi_c[25] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[26] = "O"; }
+                { reversi_c[26] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[26] = "X"; }
+                { reversi_c[26] = "\u202FX\u202F"; }
                 else
-                { reversi_c[26] = " "; }
+                { reversi_c[26] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[27] = "O"; }
+                { reversi_c[27] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[27] = "X"; }
+                { reversi_c[27] = "\u202FX\u202F"; }
                 else
-                { reversi_c[27] = " "; }
+                { reversi_c[27] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[28] = "O"; }
+                { reversi_c[28] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[28] = "X"; }
+                { reversi_c[28] = "\u202FX\u202F"; }
                 else
-                { reversi_c[28] = " "; }
+                { reversi_c[28] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[29] = "O"; }
+                { reversi_c[29] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[29] = "X"; }
+                { reversi_c[29] = "\u202FX\u202F"; }
                 else
-                { reversi_c[29] = " "; }
+                { reversi_c[29] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[30] = "O"; }
+                { reversi_c[30] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[30] = "X"; }
+                { reversi_c[30] = "\u202FX\u202F"; }
                 else
-                { reversi_c[30] = " "; }
+                { reversi_c[30] = "\u202F\u202F\u202F"; }
             }
             else if (row == 8 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[31] = "O"; }
+                { reversi_c[31] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[31] = "X"; }
+                { reversi_c[31] = "\u202FX\u202F"; }
                 else
-                { reversi_c[31] = " "; }
+                { reversi_c[31] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[32] = "O"; }
+                { reversi_c[32] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[32] = "X"; }
+                { reversi_c[32] = "\u202FX\u202F"; }
                 else
-                { reversi_c[32] = " "; }
+                { reversi_c[32] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[33] = "O"; }
+                { reversi_c[33] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[33] = "X"; }
+                { reversi_c[33] = "\u202FX\u202F"; }
                 else
-                { reversi_c[33] = " "; }
+                { reversi_c[33] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[34] = "O"; }
+                { reversi_c[34] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[34] = "X"; }
+                { reversi_c[34] = "\u202FX\u202F"; }
                 else
-                { reversi_c[34] = " "; }
+                { reversi_c[34] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[35] = "O"; }
+                { reversi_c[35] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[35] = "X"; }
+                { reversi_c[35] = "\u202FX\u202F"; }
                 else
-                { reversi_c[35] = " "; }
+                { reversi_c[35] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[36] = "O"; }
+                { reversi_c[36] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[36] = "X"; }
+                { reversi_c[36] = "\u202FX\u202F"; }
                 else
-                { reversi_c[36] = " "; }
+                { reversi_c[36] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[37] = "O"; }
+                { reversi_c[37] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[37] = "X"; }
+                { reversi_c[37] = "\u202FX\u202F"; }
                 else
-                { reversi_c[37] = " "; }
+                { reversi_c[37] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[38] = "O"; }
+                { reversi_c[38] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[38] = "X"; }
+                { reversi_c[38] = "\u202FX\u202F"; }
                 else
-                { reversi_c[38] = " "; }
+                { reversi_c[38] = "\u202F\u202F\u202F"; }
             }
             else if (row == 10 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[39] = "O"; }
+                { reversi_c[39] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[39] = "X"; }
+                { reversi_c[39] = "\u202FX\u202F"; }
                 else
-                { reversi_c[39] = " "; }
+                { reversi_c[39] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[40] = "O"; }
+                { reversi_c[40] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[40] = "X"; }
+                { reversi_c[40] = "\u202FX\u202F"; }
                 else
-                { reversi_c[40] = " "; }
+                { reversi_c[40] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[41] = "O"; }
+                { reversi_c[41] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[41] = "X"; }
+                { reversi_c[41] = "\u202FX\u202F"; }
                 else
-                { reversi_c[41] = " "; }
+                { reversi_c[41] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[42] = "O"; }
+                { reversi_c[42] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[42] = "X"; }
+                { reversi_c[42] = "\u202FX\u202F"; }
                 else
-                { reversi_c[42] = " "; }
+                { reversi_c[42] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[43] = "O"; }
+                { reversi_c[43] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[43] = "X"; }
+                { reversi_c[43] = "\u202FX\u202F"; }
                 else
-                { reversi_c[43] = " "; }
+                { reversi_c[43] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[44] = "O"; }
+                { reversi_c[44] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[44] = "X"; }
+                { reversi_c[44] = "\u202FX\u202F"; }
                 else
-                { reversi_c[44] = " "; }
+                { reversi_c[44] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[45] = "O"; }
+                { reversi_c[45] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[45] = "X"; }
+                { reversi_c[45] = "\u202FX\u202F"; }
                 else
-                { reversi_c[45] = " "; }
+                { reversi_c[45] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[46] = "O"; }
+                { reversi_c[46] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[46] = "X"; }
+                { reversi_c[46] = "\u202FX\u202F"; }
                 else
-                { reversi_c[46] = " "; }
+                { reversi_c[46] = "\u202F\u202F\u202F"; }
             }
             else if (row == 12 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[47] = "O"; }
+                { reversi_c[47] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[47] = "X"; }
+                { reversi_c[47] = "\u202FX\u202F"; }
                 else
-                { reversi_c[47] = " "; }
+                { reversi_c[47] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[48] = "O"; }
+                { reversi_c[48] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[48] = "X"; }
+                { reversi_c[48] = "\u202FX\u202F"; }
                 else
-                { reversi_c[48] = " "; }
+                { reversi_c[48] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[49] = "O"; }
+                { reversi_c[49] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[49] = "X"; }
+                { reversi_c[49] = "\u202FX\u202F"; }
                 else
-                { reversi_c[49] = " "; }
+                { reversi_c[49] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[50] = "O"; }
+                { reversi_c[50] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[50] = "X"; }
+                { reversi_c[50] = "\u202FX\u202F"; }
                 else
-                { reversi_c[50] = " "; }
+                { reversi_c[50] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[51] = "O"; }
+                { reversi_c[51] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[51] = "X"; }
+                { reversi_c[51] = "\u202FX\u202F"; }
                 else
-                { reversi_c[51] = " "; }
+                { reversi_c[51] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[52] = "O"; }
+                { reversi_c[52] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[52] = "X"; }
+                { reversi_c[52] = "\u202FX\u202F"; }
                 else
-                { reversi_c[52] = " "; }
+                { reversi_c[52] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[53] = "O"; }
+                { reversi_c[53] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[53] = "X"; }
+                { reversi_c[53] = "\u202FX\u202F"; }
                 else
-                { reversi_c[53] = " "; }
+                { reversi_c[53] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[54] = "O"; }
+                { reversi_c[54] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[54] = "X"; }
+                { reversi_c[54] = "\u202FX\u202F"; }
                 else
-                { reversi_c[54] = " "; }
+                { reversi_c[54] = "\u202F\u202F\u202F"; }
             }
             else if (row == 14 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[55] = "O"; }
+                { reversi_c[55] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[55] = "X"; }
+                { reversi_c[55] = "\u202FX\u202F"; }
                 else
-                { reversi_c[55] = " "; }
+                { reversi_c[55] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 2)
             {
                 if (status == 2)
-                { reversi_c[56] = "O"; }
+                { reversi_c[56] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[56] = "X"; }
+                { reversi_c[56] = "\u202FX\u202F"; }
                 else
-                { reversi_c[56] = " "; }
+                { reversi_c[56] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 4)
             {
                 if (status == 2)
-                { reversi_c[57] = "O"; }
+                { reversi_c[57] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[57] = "X"; }
+                { reversi_c[57] = "\u202FX\u202F"; }
                 else
-                { reversi_c[57] = " "; }
+                { reversi_c[57] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 6)
             {
                 if (status == 2)
-                { reversi_c[58] = "O"; }
+                { reversi_c[58] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[58] = "X"; }
+                { reversi_c[58] = "\u202FX\u202F"; }
                 else
-                { reversi_c[58] = " "; }
+                { reversi_c[58] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 8)
             {
                 if (status == 2)
-                { reversi_c[59] = "O"; }
+                { reversi_c[59] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[59] = "X"; }
+                { reversi_c[59] = "\u202FX\u202F"; }
                 else
-                { reversi_c[59] = " "; }
+                { reversi_c[59] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 10)
             {
                 if (status == 2)
-                { reversi_c[60] = "O"; }
+                { reversi_c[60] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[60] = "X"; }
+                { reversi_c[60] = "\u202FX\u202F"; }
                 else
-                { reversi_c[60] = " "; }
+                { reversi_c[60] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 12)
             {
                 if (status == 2)
-                { reversi_c[61] = "O"; }
+                { reversi_c[61] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[61] = "X"; }
+                { reversi_c[61] = "\u202FX\u202F"; }
                 else
-                { reversi_c[61] = " "; }
+                { reversi_c[61] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 14)
             {
                 if (status == 2)
-                { reversi_c[62] = "O"; }
+                { reversi_c[62] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[62] = "X"; }
+                { reversi_c[62] = "\u202FX\u202F"; }
                 else
-                { reversi_c[62] = " "; }
+                { reversi_c[62] = "\u202F\u202F\u202F"; }
             }
             else if (row == 16 && col == 16)
             {
                 if (status == 2)
-                { reversi_c[63] = "O"; }
+                { reversi_c[63] = "\u202FO\u202F"; }
                 else if ((status == 1))
-                { reversi_c[63] = "X"; }
+                { reversi_c[63] = "\u202FX\u202F"; }
                 else
-                { reversi_c[63] = " "; }
+                { reversi_c[63] = "\u202F\u202F\u202F"; }
             }
         }
 
@@ -1101,50 +1122,61 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
             Console.WriteLine("Col: 2, 4, 6, 8, 10, 12, 14, 16");
-            Console.WriteLine("   --------------------------");
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[0], reversi_c[1], reversi_c[2], reversi_c[3], reversi_c[4], reversi_c[5], reversi_c[6], reversi_c[7]);
-            Console.WriteLine("   --------------------------");
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[8], reversi_c[9], reversi_c[10], reversi_c[11], reversi_c[12], reversi_c[13], reversi_c[14], reversi_c[15]);
-            Console.WriteLine("   --------------------------");
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[16], reversi_c[17], reversi_c[18], reversi_c[19], reversi_c[20], reversi_c[21], reversi_c[22], reversi_c[23]);
-            Console.WriteLine("   --------------------------");
+           Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[24], reversi_c[25], reversi_c[26], reversi_c[27], reversi_c[28], reversi_c[29], reversi_c[30], reversi_c[31]);
-            Console.WriteLine("   --------------------------");
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[32], reversi_c[33], reversi_c[34], reversi_c[35], reversi_c[36], reversi_c[37], reversi_c[38], reversi_c[39]);
-            Console.WriteLine("   --------------------------");
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[40], reversi_c[41], reversi_c[42], reversi_c[43], reversi_c[44], reversi_c[45], reversi_c[46], reversi_c[47]);
-            Console.WriteLine("   --------------------------");
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[48], reversi_c[49], reversi_c[50], reversi_c[51], reversi_c[52], reversi_c[53], reversi_c[54], reversi_c[55]);
-            Console.WriteLine("   --------------------------");
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
 
-            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[56], reversi_c[57], reversi_c[58], reversi_c[59], reversi_c[60], reversi_c[61], reversi_c[62], reversi_c[63]);
-            Console.WriteLine("   --------------------------"); ;
+            Console.WriteLine("\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2518");
 
 
 
 
         }
 
+        // clean the content save in the tic_coordi
+        public void initialChessBoard(Game game){
+            if (game.CurGameType == (GameType.tictactoe).ToString()){
+                for (int i = 0 ; i < 9 ; i ++)
+                    tic_c[i] = STR_SPACE;
+            }else{
+                for (int i = 0 ; i < 64 ; i ++)
+                    reversi_c[i] = STR_SPACE;
+            }
+        }
 
+        const string STR_SPACE = "\u202F\u202F\u202F";
 
         public int counter = 1;
         public int k = 0;
-        public static string[] tic_coordiante = new string[9];
-        public static string[] reversi_c = new string[64];
+        public static string[] tic_c = new string[9]; //saving chess at each position
+        public static string[] reversi_c = new string[64]; //saving chess at each position
 
         private List<int> rowcolstatuslist = new List<int>();
         public List<int> Rowcolstatuslist
