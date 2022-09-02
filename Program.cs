@@ -1267,7 +1267,287 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 t_row = 2;
                 t_col = 16;
             }
-            
+            else if (cooridint == 9)
+            {
+                t_row = 4;
+                t_col = 2;
+            }
+            else if (cooridint == 9)
+            {
+                t_row = 4;
+                t_col = 4;
+            }
+            else if (cooridint == 10)
+            {
+                t_row = 4;
+                t_col = 6;
+            }
+            else if (cooridint == 11)
+            {
+                t_row = 4;
+                t_col = 8;
+            }
+            else if (cooridint == 12)
+            {
+                t_row = 4;
+                t_col = 10;
+            }
+            else if (cooridint == 13)
+            {
+                t_row = 4;
+                t_col = 12;
+            }
+            else if (cooridint == 14)
+            {
+                t_row = 4;
+                t_col = 14;
+            }
+            else if (cooridint == 15)
+            {
+                t_row = 4;
+                t_col = 16;
+            }
+            else if (cooridint == 16)
+            {
+                t_row = 6;
+                t_col = 2;
+            }
+            else if (cooridint == 17)
+            {
+                t_row = 6;
+                t_col = 4;
+            }
+            else if (cooridint == 18)
+            {
+                t_row = 6;
+                t_col = 6;
+            }
+            else if (cooridint == 19)
+            {
+                t_row = 6;
+                t_col = 8;
+            }
+            else if (cooridint == 20)
+            {
+                t_row = 6;
+                t_col = 10;
+            }
+            else if (cooridint == 21)
+            {
+                t_row = 6;
+                t_col = 12;
+            }
+            else if (cooridint == 22)
+            {
+                t_row = 6;
+                t_col = 14;
+            }
+            else if (cooridint == 23)
+            {
+                t_row = 6;
+                t_col = 16;
+            }
+            else if (cooridint == 24)
+            {
+                t_row = 8;
+                t_col = 2;
+            }
+            else if (cooridint == 25)
+            {
+                t_row = 8;
+                t_col = 4;
+            }
+            else if (cooridint == 26)
+            {
+                t_row = 8;
+                t_col = 6;
+            }
+            else if (cooridint == 27)
+            {
+                t_row = 8;
+                t_col = 8;
+            }
+            else if (cooridint == 28)
+            {
+                t_row = 8;
+                t_col = 10;
+            }
+            else if (cooridint == 29)
+            {
+                t_row = 8;
+                t_col = 12;
+            }
+            else if (cooridint == 30)
+            {
+                t_row = 8;
+                t_col = 14;
+            }
+            else if (cooridint == 31)
+            {
+                t_row = 8;
+                t_col = 16;
+            }
+            else if (cooridint == 32)
+            {
+                t_row = 10;
+                t_col = 2;
+            }
+            else if (cooridint == 33)
+            {
+                t_row = 10;
+                t_col = 4;
+            }
+            else if (cooridint == 34)
+            {
+                t_row = 10;
+                t_col = 6;
+            }
+            else if (cooridint == 35)
+            {
+                t_row = 10;
+                t_col = 8;
+            }
+            else if (cooridint == 36)
+            {
+                t_row = 10;
+                t_col = 10;
+            }
+            else if (cooridint == 37)
+            {
+                t_row = 10;
+                t_col = 12;
+            }
+            else if (cooridint == 38)
+            {
+                t_row = 10;
+                t_col = 14;
+            }
+            else if (cooridint == 39)
+            {
+                t_row = 10;
+                t_col = 16;
+            }
+            else if (cooridint == 40)
+            {
+                t_row = 12;
+                t_col = 2;
+            }
+            else if (cooridint == 41)
+            {
+                t_row = 12;
+                t_col = 4;
+            }
+            else if (cooridint == 42)
+            {
+                t_row = 12;
+                t_col = 6;
+            }
+            else if (cooridint == 43)
+            {
+                t_row = 12;
+                t_col = 8;
+            }
+            else if (cooridint == 44)
+            {
+                t_row = 12;
+                t_col = 10;
+            }
+            else if (cooridint == 45)
+            {
+                t_row = 12;
+                t_col = 12;
+            }
+            else if (cooridint == 46)
+            {
+                t_row = 12;
+                t_col = 14;
+            }
+            else if (cooridint == 47)
+            {
+                t_row = 12;
+                t_col = 16;
+            }
+            else if (cooridint == 48)
+            {
+                t_row = 14;
+                t_col = 2;
+            }
+            else if (cooridint == 49)
+            {
+                t_row = 14;
+                t_col = 4;
+            }
+            else if (cooridint == 50)
+            {
+                t_row = 14;
+                t_col = 6;
+            }
+            else if (cooridint == 51)
+            {
+                t_row = 14;
+                t_col = 8;
+            }
+            else if (cooridint == 52)
+            {
+                t_row = 14;
+                t_col = 10;
+            }
+            else if (cooridint == 53)
+            {
+                t_row = 14;
+                t_col = 12;
+            }
+            else if (cooridint == 54)
+            {
+                t_row = 14;
+                t_col = 14;
+            }
+            else if (cooridint == 55)
+            {
+                t_row = 14;
+                t_col = 16;
+            }
+            else if (cooridint == 56)
+            {
+                t_row = 16;
+                t_col = 2;
+            }
+            else if (cooridint == 57)
+            {
+                t_row = 16;
+                t_col = 4;
+            }
+            else if (cooridint == 58)
+            {
+                t_row = 16;
+                t_col = 6;
+            }
+            else if (cooridint == 59)
+            {
+                t_row = 16;
+                t_col = 8;
+            }
+            else if (cooridint == 60)
+            {
+                t_row = 16;
+                t_col = 10;
+            }
+            else if (cooridint == 61)
+            {
+                t_row = 16;
+                t_col = 12;
+            }
+            else if (cooridint == 62)
+            {
+                t_row = 16;
+                t_col = 14;
+            }
+            else if (cooridint == 63)
+            {
+                t_row = 16;
+                t_col = 16;
+            }
+
         }
     }
 
