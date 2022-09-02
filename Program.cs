@@ -22,12 +22,25 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             // let user to select which game mode he/she want to play
             WriteLine("Please enter which game mode u want to play:\n1.play with human\n2.play with computer");
             game = game.setGameMode(ReadLine(), game);
-            WriteLine($"You choose {game.CurGameType} and the game mode is {game.CurGameMode}");
+            List<Player> player_list = new List<Player>();
+            player_list = game.createPlayer(game.CurGameMode);
+            
+            // WriteLine($"You choose {game.CurGameType} and the game mode is {game.CurGameMode}");
             //board.drawBoard(game);
+            // game.drawTest();
+            game.startGame(game, board, player_list);
         }
     }
 
     class Game {
+        // maximum number of each type of game
+        readonly int[] NUM_MAXMOVE = new int[3] {0, 9, 64};
+
+        // record the status of this game
+        // odd number is player1, even number is player2
+        private int num_ChessMove = 0;
+
+        private Move move = new Move();
         private string str_CurGameMode = (GameMode.hvh).ToString();
         private string str_CurGameType = (GameType.tictactoe).ToString();
         // public Board board = new Board();
@@ -84,7 +97,73 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             game.str_CurGameMode = ((GameMode)num_mode).ToString();
             return game;
         }
-    
+
+        public List<Player> createPlayer(string gm){
+            // list {empty, player1, player2}
+            List<Player> player_list = new List<Player>();
+            // just for making the index number sync with player number
+            Player p0 = new Player();
+            Player p1 = new Human();
+            player_list.Add(p0);
+            player_list.Add(p1);
+            if ( gm == (GameMode.cvh).ToString() ){
+                Player p2 = new Computer();
+                player_list.Add(p2);
+            }else{
+                Player p2 = new Human();
+                player_list.Add(p2);
+            }
+            return player_list;
+        }
+
+        // return number of current player
+        private int getPlayerNum(int val){
+            // return number of the current player
+            return val%2==0?1:2;
+        }
+
+        // start a new game
+        public bool startGame( Game game, Board board, List<Player> player_list){
+            //gm: current game mode
+            //gt: current game type
+
+            bool res = false;
+            //assume that player1 always be the first player
+            player_list[0].reversi_rowinput(1);
+            
+            if ( game.CurGameType == (GameType.tictactoe).ToString() ){
+                while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.tictactoe] ){
+                    int row = player_list[this.getPlayerNum(game.num_ChessMove)].tic_rowinput(this.getPlayerNum(game.num_ChessMove));
+                    int col = player_list[this.getPlayerNum(game.num_ChessMove)].tic_colinput(this.getPlayerNum(game.num_ChessMove));
+                    board.transferrowcoltobox(
+                        row,
+                        col,
+                        this.getPlayerNum(game.num_ChessMove)
+                        );
+                    board.ticboard1();
+                    int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
+                    if ( num_GameRes != 0 ) break;
+                    game.changeStatus(game, 1);
+                }
+                
+            }else{
+
+            }
+            return res;
+        }
+
+        // adjust calculator of number of moves
+        public void changeStatus(Game game, int offset){
+            // change num_ChessStatus everytime when any players move the chess or user back to previous move
+            // offset: 1 (next move
+            //         -1 (previous move
+            if (offset == -1 || offset == 1){
+                game.num_ChessMove += offset;
+            }else{
+                // use this function by giving the wrong value!!!!
+            }
+            
+        }
     }
 
     class Move
@@ -92,8 +171,16 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // check valid move
 
 
-        public int checkresult(int t_row, int t_col, int chessstatus)
+        public int checkresult(int t_row, int t_col, int chessstatus, int moves)
         {
+            // moves: current number of moves
+
+            // return game result
+            // 0: can be continue
+            // 1: player1 win
+            // 2: player2 win
+            // 3: tie game
+
             //diagoanl 2,2 / 4,4 / 6,6
             if (t_row == 2 && t_col == 2)
             {
@@ -192,7 +279,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             else if (diagonalcounter3 == 3)
             { Console.WriteLine("Player 1 Win "); return 1; }
             else if (diagonalcounter4 == 3)
-                return 4;
+            { Console.WriteLine("Player 2 Win "); return 2; }
             else if (row2counter1 == 3)
             { Console.WriteLine("Player 1 Win "); return 1; }
             else if (row4counter1 == 3)
@@ -217,8 +304,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             { Console.WriteLine("Player 2 Win "); return 2; }
             else if (col6counter2 == 3)
             { Console.WriteLine("Player 2 Win "); return 2; }
-            else
-            { Console.WriteLine("drawn game"); }
+            else if (moves == 9) {
+                Console.WriteLine("drawn game");
+                return 3;
+            }
 
             return 0;
         }
@@ -288,87 +377,93 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         
         public int transferrowcoltobox(int row, int col, int status)
         {
-            if (row == 2 && col == 2)
-            {
-                if (status == 2)
-                { tic_coordiante[0] = "O"; }
-                else if (status == 1)
-                { tic_coordiante[0] = "X"; }
-                else
-                { tic_coordiante[0] = " "; }
+            //Tic Tac Toe
+            if (this.CurGameType == (GameType.tictactoe).ToString()){
+                if (row == 2 && col == 2)
+                {
+                    if (status == 2)
+                    { tic_coordiante[0] = "O"; }
+                    else if (status == 1)
+                    { tic_coordiante[0] = "X"; }
+                    else
+                    { tic_coordiante[0] = " "; }
+                }
+                else if (row == 2 && col == 4)
+                {
+                    if (status == 2)
+                    { tic_coordiante[1] = "O"; }
+                    else if (status == 1)
+                    { tic_coordiante[1] = "X"; }
+                    else
+                    { tic_coordiante[1] = " "; }
+                }
+                else if (row == 2 && col == 6)
+                {
+                    if (status == 2)
+                    { tic_coordiante[2] = "O"; }
+                    else if (status == 1)
+                    { tic_coordiante[2] = "X"; }
+                    else
+                    { tic_coordiante[2] = " "; }
+                }
+                else if (row == 4 && col == 2)
+                {
+                    if (status == 2)
+                    { tic_coordiante[3] = "O"; }
+                    else if (status == 1)
+                    { tic_coordiante[3] = "X"; }
+                    else
+                    { tic_coordiante[3] = " "; }
+                }
+                else if (row == 4 && col == 4)
+                {
+                    if (status == 2)
+                    { tic_coordiante[4] = "O"; }
+                    else if (status == 1)
+                    { tic_coordiante[4] = "X"; }
+                    else
+                    { tic_coordiante[4] = " "; }
+                }
+                else if (row == 4 && col == 6)
+                {
+                    if (status == 2)
+                    { tic_coordiante[5] = "O"; }
+                    else if (status == 1)
+                    { tic_coordiante[5] = "X"; }
+                    else
+                    { tic_coordiante[5] = " "; }
+                }
+                else if (row == 6 && col == 2)
+                {
+                    if (status == 2)
+                    { tic_coordiante[6] = "O"; }
+                    else if ((status == 1))
+                    { tic_coordiante[6] = "X"; }
+                    else
+                    { tic_coordiante[6] = " "; }
+                }
+                else if (row == 6 && col == 4)
+                {
+                    if (status == 2)
+                    { tic_coordiante[7] = "O"; }
+                    else if ((status == 1))
+                    { tic_coordiante[7] = "X"; }
+                    else
+                    { tic_coordiante[7] = " "; }
+                }
+                else if (row == 6 && col == 6)
+                {
+                    if (status == 2)
+                    { tic_coordiante[8] = "O"; }
+                    else if ((status == 1))
+                    { tic_coordiante[8] = "X"; }
+                    else
+                    { tic_coordiante[8] = " "; }
+                }
+            }else{
+
             }
-            else if (row == 2 && col == 4)
-            {
-                if (status == 2)
-                { tic_coordiante[1] = "O"; }
-                else if (status == 1)
-                { tic_coordiante[1] = "X"; }
-                else
-                { tic_coordiante[1] = " "; }
-            }
-            else if (row == 2 && col == 6)
-            {
-                if (status == 2)
-                { tic_coordiante[2] = "O"; }
-                else if (status == 1)
-                { tic_coordiante[2] = "X"; }
-                else
-                { tic_coordiante[2] = " "; }
-            }
-            else if (row == 4 && col == 2)
-            {
-                if (status == 2)
-                { tic_coordiante[3] = "O"; }
-                else if (status == 1)
-                { tic_coordiante[3] = "X"; }
-                else
-                { tic_coordiante[3] = " "; }
-            }
-            else if (row == 4 && col == 4)
-            {
-                if (status == 2)
-                { tic_coordiante[4] = "O"; }
-                else if (status == 1)
-                { tic_coordiante[4] = "X"; }
-                else
-                { tic_coordiante[4] = " "; }
-            }
-            else if (row == 4 && col == 6)
-            {
-                if (status == 2)
-                { tic_coordiante[5] = "O"; }
-                else if (status == 1)
-                { tic_coordiante[5] = "X"; }
-                else
-                { tic_coordiante[5] = " "; }
-            }
-            else if (row == 6 && col == 2)
-            {
-                if (status == 2)
-                { tic_coordiante[6] = "O"; }
-                else if ((status == 1))
-                { tic_coordiante[6] = "X"; }
-                else
-                { tic_coordiante[6] = " "; }
-            }
-            else if (row == 6 && col == 4)
-            {
-                if (status == 2)
-                { tic_coordiante[7] = "O"; }
-                else if ((status == 1))
-                { tic_coordiante[7] = "X"; }
-                else
-                { tic_coordiante[7] = " "; }
-            }
-            else if (row == 6 && col == 6)
-            {
-                if (status == 2)
-                { tic_coordiante[8] = "O"; }
-                else if ((status == 1))
-                { tic_coordiante[8] = "X"; }
-                else
-                { tic_coordiante[8] = " "; }
-            }
+            
 
 
             return 0;
@@ -376,13 +471,13 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public void ticboard1()
         {
 
-            Console.WriteLine("-----------");
-            Console.WriteLine("| {0} | {1} | {2} |", tic_coordiante[0], tic_coordiante[1], tic_coordiante[2]);
-            Console.WriteLine("-----------");
-            Console.WriteLine("| {0} | {1} | {2} |", tic_coordiante[3], tic_coordiante[4], tic_coordiante[5]);
-            Console.WriteLine("-----------");
-            Console.WriteLine("| {0} | {1} | {2} |", tic_coordiante[6], tic_coordiante[7], tic_coordiante[8]);
-            Console.WriteLine("-----------");
+            Console.WriteLine("\u250c\u2500\u2500\u252c\u2500\u2500\u252c\u2500\u2500\u2510");
+            Console.WriteLine("\u2502\u2502\u2502 {2} \u2502", tic_coordiante[0], tic_coordiante[1], tic_coordiante[2]);
+            Console.WriteLine("\u251c\u2500\u2500\u253c\u2500\u2500\u253c\u2500\u2500\u2524");
+            Console.WriteLine("\u2502 {0} \u2502 {1} \u2502 {2} \u2502", tic_coordiante[3], tic_coordiante[4], tic_coordiante[5]);
+            Console.WriteLine("\u251c\u2500\u2500\u253c\u2500\u2500\u253c\u2500\u2500\u2524");
+            Console.WriteLine("\u2502 {0} \u2502 {1} \u2502 {2} \u2502", tic_coordiante[6], tic_coordiante[7], tic_coordiante[8]);
+            Console.WriteLine("\u2514\u2500\u2500\u2534\u2500\u2500\u2534\u2500\u2500\u2518");
 
         }
         /* 
@@ -412,36 +507,645 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          * - >> 1,3,5,7,9,11,13,15,17
          * | >> 2,4,6,8,10,12,14,16
          */
-        public void reversiboard1()
+        public void initialreversi()
         {
-            for (int i = 1; i <= 17; i++)
+
+            reversi_c[27] = "O";
+            reversi_c[28] = "O";
+            reversi_c[35] = "X";
+            reversi_c[36] = "X";
+
+        }
+
+        public void place(int row, int col, int status)
+        {
+            if (row == 2 && col == 2)
             {
-                for (int j = 1; j <= 17; j++)
-                {
-                    /* - */
-                    if ((i % 2) == 1)
-                    {
-                        Console.Write("-");
-                    }
-                    else if ((j%2) == 0) /*2,4,6,8,10,12,14,16*/
-                    {
-                        Console.Write(" ");
-                    }
-                    else
-                    {
-
-                        Console.Write("|");
-
-                    }
-
-                }
-                WriteLine();
+                if (status == 2)
+                { reversi_c[0] = "O"; }
+                else if (status == 1)
+                { reversi_c[0] = "X"; }
+                else
+                { reversi_c[0] = " "; }
+            }
+            else if (row == 2 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[1] = "O"; }
+                else if (status == 1)
+                { reversi_c[1] = "X"; }
+                else
+                { reversi_c[1] = " "; }
+            }
+            else if (row == 2 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[2] = "O"; }
+                else if (status == 1)
+                { reversi_c[2] = "X"; }
+                else
+                { reversi_c[2] = " "; }
+            }
+            else if (row == 2 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[3] = "O"; }
+                else if (status == 1)
+                { reversi_c[3] = "X"; }
+                else
+                { reversi_c[3] = " "; }
+            }
+            else if (row == 2 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[4] = "O"; }
+                else if (status == 1)
+                { reversi_c[4] = "X"; }
+                else
+                { reversi_c[4] = " "; }
+            }
+            else if (row == 2 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[5] = "O"; }
+                else if (status == 1)
+                { reversi_c[5] = "X"; }
+                else
+                { reversi_c[5] = " "; }
+            }
+            else if (row == 2 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[6] = "O"; }
+                else if (status == 1)
+                { reversi_c[6] = "X"; }
+                else
+                { reversi_c[6] = " "; }
+            }
+            else if (row == 2 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[7] = "O"; }
+                else if (status == 1)
+                { reversi_c[7] = "X"; }
+                else
+                { reversi_c[7] = " "; }
+            }
+            else if (row == 4 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[8] = "O"; }
+                else if (status == 1)
+                { reversi_c[8] = "X"; }
+                else
+                { reversi_c[8] = " "; }
+            }
+            else if (row == 4 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[9] = "O"; }
+                else if (status == 1)
+                { reversi_c[9] = "X"; }
+                else
+                { reversi_c[9] = " "; }
+            }
+            else if (row == 4 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[10] = "O"; }
+                else if (status == 1)
+                { reversi_c[10] = "X"; }
+                else
+                { reversi_c[10] = " "; }
+            }
+            else if (row == 4 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[11] = "O"; }
+                else if (status == 1)
+                { reversi_c[11] = "X"; }
+                else
+                { reversi_c[11] = " "; }
+            }
+            else if (row == 4 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[12] = "O"; }
+                else if (status == 1)
+                { reversi_c[12] = "X"; }
+                else
+                { reversi_c[12] = " "; }
+            }
+            else if (row == 4 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[13] = "O"; }
+                else if (status == 1)
+                { reversi_c[13] = "X"; }
+                else
+                { reversi_c[13] = " "; }
+            }
+            else if (row == 4 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[14] = "O"; }
+                else if (status == 1)
+                { reversi_c[14] = "X"; }
+                else
+                { reversi_c[14] = " "; }
+            }
+            else if (row == 4 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[16] = "O"; }
+                else if (status == 1)
+                { reversi_c[16] = "X"; }
+                else
+                { reversi_c[16] = " "; }
+            }
+            else if (row == 6 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[17] = "O"; }
+                else if ((status == 1))
+                { reversi_c[17] = "X"; }
+                else
+                { reversi_c[17] = " "; }
+            }
+            else if (row == 6 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[17] = "O"; }
+                else if ((status == 1))
+                { reversi_c[17] = "X"; }
+                else
+                { reversi_c[17] = " "; }
+            }
+            else if (row == 6 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[18] = "O"; }
+                else if ((status == 1))
+                { reversi_c[18] = "X"; }
+                else
+                { reversi_c[18] = " "; }
+            }
+            else if (row == 6 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[19] = "O"; }
+                else if ((status == 1))
+                { reversi_c[19] = "X"; }
+                else
+                { reversi_c[19] = " "; }
+            }
+            else if (row == 6 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[20] = "O"; }
+                else if ((status == 1))
+                { reversi_c[20] = "X"; }
+                else
+                { reversi_c[20] = " "; }
+            }
+            else if (row == 6 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[21] = "O"; }
+                else if ((status == 1))
+                { reversi_c[21] = "X"; }
+                else
+                { reversi_c[21] = " "; }
+            }
+            else if (row == 6 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[22] = "O"; }
+                else if ((status == 1))
+                { reversi_c[22] = "X"; }
+                else
+                { reversi_c[22] = " "; }
+            }
+            else if (row == 6 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[23] = "O"; }
+                else if ((status == 1))
+                { reversi_c[23] = "X"; }
+                else
+                { reversi_c[23] = " "; }
+            }
+            else if (row == 8 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[24] = "O"; }
+                else if ((status == 1))
+                { reversi_c[24] = "X"; }
+                else
+                { reversi_c[24] = " "; }
+            }
+            else if (row == 8 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[25] = "O"; }
+                else if ((status == 1))
+                { reversi_c[25] = "X"; }
+                else
+                { reversi_c[25] = " "; }
+            }
+            else if (row == 8 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[26] = "O"; }
+                else if ((status == 1))
+                { reversi_c[26] = "X"; }
+                else
+                { reversi_c[26] = " "; }
+            }
+            else if (row == 8 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[27] = "O"; }
+                else if ((status == 1))
+                { reversi_c[27] = "X"; }
+                else
+                { reversi_c[27] = " "; }
+            }
+            else if (row == 8 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[28] = "O"; }
+                else if ((status == 1))
+                { reversi_c[28] = "X"; }
+                else
+                { reversi_c[28] = " "; }
+            }
+            else if (row == 8 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[29] = "O"; }
+                else if ((status == 1))
+                { reversi_c[29] = "X"; }
+                else
+                { reversi_c[29] = " "; }
+            }
+            else if (row == 8 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[30] = "O"; }
+                else if ((status == 1))
+                { reversi_c[30] = "X"; }
+                else
+                { reversi_c[30] = " "; }
+            }
+            else if (row == 8 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[31] = "O"; }
+                else if ((status == 1))
+                { reversi_c[31] = "X"; }
+                else
+                { reversi_c[31] = " "; }
+            }
+            else if (row == 10 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[32] = "O"; }
+                else if ((status == 1))
+                { reversi_c[32] = "X"; }
+                else
+                { reversi_c[32] = " "; }
+            }
+            else if (row == 10 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[33] = "O"; }
+                else if ((status == 1))
+                { reversi_c[33] = "X"; }
+                else
+                { reversi_c[33] = " "; }
+            }
+            else if (row == 10 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[34] = "O"; }
+                else if ((status == 1))
+                { reversi_c[34] = "X"; }
+                else
+                { reversi_c[34] = " "; }
+            }
+            else if (row == 10 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[35] = "O"; }
+                else if ((status == 1))
+                { reversi_c[35] = "X"; }
+                else
+                { reversi_c[35] = " "; }
+            }
+            else if (row == 10 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[36] = "O"; }
+                else if ((status == 1))
+                { reversi_c[36] = "X"; }
+                else
+                { reversi_c[36] = " "; }
+            }
+            else if (row == 10 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[37] = "O"; }
+                else if ((status == 1))
+                { reversi_c[37] = "X"; }
+                else
+                { reversi_c[37] = " "; }
+            }
+            else if (row == 10 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[38] = "O"; }
+                else if ((status == 1))
+                { reversi_c[38] = "X"; }
+                else
+                { reversi_c[38] = " "; }
+            }
+            else if (row == 10 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[39] = "O"; }
+                else if ((status == 1))
+                { reversi_c[39] = "X"; }
+                else
+                { reversi_c[39] = " "; }
+            }
+            else if (row == 12 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[40] = "O"; }
+                else if ((status == 1))
+                { reversi_c[40] = "X"; }
+                else
+                { reversi_c[40] = " "; }
+            }
+            else if (row == 12 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[41] = "O"; }
+                else if ((status == 1))
+                { reversi_c[41] = "X"; }
+                else
+                { reversi_c[41] = " "; }
+            }
+            else if (row == 12 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[42] = "O"; }
+                else if ((status == 1))
+                { reversi_c[42] = "X"; }
+                else
+                { reversi_c[42] = " "; }
+            }
+            else if (row == 12 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[43] = "O"; }
+                else if ((status == 1))
+                { reversi_c[43] = "X"; }
+                else
+                { reversi_c[43] = " "; }
+            }
+            else if (row == 12 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[44] = "O"; }
+                else if ((status == 1))
+                { reversi_c[44] = "X"; }
+                else
+                { reversi_c[44] = " "; }
+            }
+            else if (row == 12 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[45] = "O"; }
+                else if ((status == 1))
+                { reversi_c[45] = "X"; }
+                else
+                { reversi_c[45] = " "; }
+            }
+            else if (row == 12 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[46] = "O"; }
+                else if ((status == 1))
+                { reversi_c[46] = "X"; }
+                else
+                { reversi_c[46] = " "; }
+            }
+            else if (row == 12 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[47] = "O"; }
+                else if ((status == 1))
+                { reversi_c[47] = "X"; }
+                else
+                { reversi_c[47] = " "; }
+            }
+            else if (row == 14 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[48] = "O"; }
+                else if ((status == 1))
+                { reversi_c[48] = "X"; }
+                else
+                { reversi_c[48] = " "; }
+            }
+            else if (row == 14 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[49] = "O"; }
+                else if ((status == 1))
+                { reversi_c[49] = "X"; }
+                else
+                { reversi_c[49] = " "; }
+            }
+            else if (row == 14 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[50] = "O"; }
+                else if ((status == 1))
+                { reversi_c[50] = "X"; }
+                else
+                { reversi_c[50] = " "; }
+            }
+            else if (row == 14 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[51] = "O"; }
+                else if ((status == 1))
+                { reversi_c[51] = "X"; }
+                else
+                { reversi_c[51] = " "; }
+            }
+            else if (row == 14 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[52] = "O"; }
+                else if ((status == 1))
+                { reversi_c[52] = "X"; }
+                else
+                { reversi_c[52] = " "; }
+            }
+            else if (row == 14 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[53] = "O"; }
+                else if ((status == 1))
+                { reversi_c[53] = "X"; }
+                else
+                { reversi_c[53] = " "; }
+            }
+            else if (row == 14 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[54] = "O"; }
+                else if ((status == 1))
+                { reversi_c[54] = "X"; }
+                else
+                { reversi_c[54] = " "; }
+            }
+            else if (row == 14 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[55] = "O"; }
+                else if ((status == 1))
+                { reversi_c[55] = "X"; }
+                else
+                { reversi_c[55] = " "; }
+            }
+            else if (row == 16 && col == 2)
+            {
+                if (status == 2)
+                { reversi_c[56] = "O"; }
+                else if ((status == 1))
+                { reversi_c[56] = "X"; }
+                else
+                { reversi_c[56] = " "; }
+            }
+            else if (row == 16 && col == 4)
+            {
+                if (status == 2)
+                { reversi_c[57] = "O"; }
+                else if ((status == 1))
+                { reversi_c[57] = "X"; }
+                else
+                { reversi_c[57] = " "; }
+            }
+            else if (row == 16 && col == 6)
+            {
+                if (status == 2)
+                { reversi_c[58] = "O"; }
+                else if ((status == 1))
+                { reversi_c[58] = "X"; }
+                else
+                { reversi_c[58] = " "; }
+            }
+            else if (row == 16 && col == 8)
+            {
+                if (status == 2)
+                { reversi_c[59] = "O"; }
+                else if ((status == 1))
+                { reversi_c[59] = "X"; }
+                else
+                { reversi_c[59] = " "; }
+            }
+            else if (row == 16 && col == 10)
+            {
+                if (status == 2)
+                { reversi_c[60] = "O"; }
+                else if ((status == 1))
+                { reversi_c[60] = "X"; }
+                else
+                { reversi_c[60] = " "; }
+            }
+            else if (row == 16 && col == 12)
+            {
+                if (status == 2)
+                { reversi_c[61] = "O"; }
+                else if ((status == 1))
+                { reversi_c[61] = "X"; }
+                else
+                { reversi_c[61] = " "; }
+            }
+            else if (row == 16 && col == 14)
+            {
+                if (status == 2)
+                { reversi_c[62] = "O"; }
+                else if ((status == 1))
+                { reversi_c[62] = "X"; }
+                else
+                { reversi_c[62] = " "; }
+            }
+            else if (row == 16 && col == 16)
+            {
+                if (status == 2)
+                { reversi_c[63] = "O"; }
+                else if ((status == 1))
+                { reversi_c[63] = "X"; }
+                else
+                { reversi_c[63] = " "; }
             }
         }
+
+        public void reversiboard1()
+        {
+            Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
+            Console.WriteLine("Col: 2, 4, 6, 8, 10, 12, 14, 16");
+            Console.WriteLine("   --------------------------");
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[0], reversi_c[1], reversi_c[2], reversi_c[3], reversi_c[4], reversi_c[5], reversi_c[6], reversi_c[7]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[8], reversi_c[9], reversi_c[10], reversi_c[11], reversi_c[12], reversi_c[13], reversi_c[14], reversi_c[15]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[16], reversi_c[17], reversi_c[18], reversi_c[19], reversi_c[20], reversi_c[21], reversi_c[22], reversi_c[23]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[24], reversi_c[25], reversi_c[26], reversi_c[27], reversi_c[28], reversi_c[29], reversi_c[30], reversi_c[31]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[32], reversi_c[33], reversi_c[34], reversi_c[35], reversi_c[36], reversi_c[37], reversi_c[38], reversi_c[39]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[40], reversi_c[41], reversi_c[42], reversi_c[43], reversi_c[44], reversi_c[45], reversi_c[46], reversi_c[47]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[48], reversi_c[49], reversi_c[50], reversi_c[51], reversi_c[52], reversi_c[53], reversi_c[54], reversi_c[55]);
+            Console.WriteLine("   --------------------------");
+
+            Console.WriteLine("   | {0} | {1} | {2} | {3} | {4} | {5} | {6} | {7} |",
+                reversi_c[56], reversi_c[57], reversi_c[58], reversi_c[59], reversi_c[60], reversi_c[61], reversi_c[62], reversi_c[63]);
+            Console.WriteLine("   --------------------------"); ;
+
+
+
+
+        }
+
+
 
         public int counter = 1;
         public int k = 0;
         public static string[] tic_coordiante = new string[9];
+        public static string[] reversi_c = new string[64];
+
         private List<int> rowcolstatuslist = new List<int>();
         public List<int> Rowcolstatuslist
         {
@@ -473,10 +1177,15 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public static int tic_colcoordiantes;
         public static int reversi_rowcoordiantes;
         public static int reversi_colcoordiantes;
+
+        virtual public int tic_rowinput(int chessstatus){ return 0; }
+        virtual public int tic_colinput(int chessstatus){ return 0; }
+        virtual public int reversi_rowinput(int chessstatus){ return 0; }
+        virtual public int reversi_colinput(int chessstatus){ return 0; }
     }
 
     class Human : Player{
-        public int tic_rowinput(int chessstatus)
+        override public int tic_rowinput(int chessstatus)
         {
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
             string rowinput = Console.ReadLine();
@@ -494,7 +1203,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             return tic_rowcoordiantes;
         }
-        public int tic_colinput(int chessstatus)
+        override public int tic_colinput(int chessstatus)
         {
             Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
             string colinput = Console.ReadLine();
@@ -512,7 +1221,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             return tic_colcoordiantes;
         }
 
-        public int reversi_rowinput(int chessstatus)
+        override public int reversi_rowinput(int chessstatus)
         {
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
             string rowinput = Console.ReadLine();
@@ -529,7 +1238,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             return reversi_rowcoordiantes;
         }
-        public int reversi_colinput(int chessstatus)
+        override public int reversi_colinput(int chessstatus)
         {
             Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
             string colinput = Console.ReadLine();
@@ -551,7 +1260,395 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class Computer : Player{
-        
+        public void tictactoerandom()
+        {
+            Random rand = new Random();
+
+            int cooridint = rand.Next(1, 9);
+
+            int t_row = 0;
+            int t_col = 0;
+
+
+            if (cooridint == 1)
+            {
+                t_row = 2;
+                t_col = 2;
+            }
+            else if (cooridint == 2)
+            {
+                t_row = 2;
+                t_col = 4;
+            }
+            else if (cooridint == 3)
+            {
+                t_row = 2;
+                t_col = 6;
+            }
+            else if (cooridint == 4)
+            {
+                t_row = 4;
+                t_col = 2;
+            }
+            else if (cooridint == 5)
+            {
+                t_row = 4;
+                t_col = 4;
+            }
+            else if (cooridint == 6)
+            {
+                t_row = 4;
+                t_col = 6;
+            }
+            else if (cooridint == 7)
+            {
+                t_row = 6;
+                t_col = 2;
+            }
+            else if (cooridint == 8)
+            {
+                t_row = 6;
+                t_col = 4;
+            }
+            else if (cooridint == 9)
+            {
+                t_row = 6;
+                t_col = 6;
+            }
+        }
+
+        public void reversirandom()
+        {
+            Random rand = new Random();
+
+            int cooridint = rand.Next(1, 64);
+
+            int t_row = 0;
+            int t_col = 0;
+
+
+            if (cooridint == 1)
+            {
+                t_row = 2;
+                t_col = 2;
+            }
+            else if (cooridint == 2)
+            {
+                t_row = 2;
+                t_col = 4;
+            }
+            else if (cooridint == 3)
+            {
+                t_row = 2;
+                t_col = 6;
+            }
+            else if (cooridint == 4)
+            {
+                t_row = 2;
+                t_col = 8;
+            }
+            else if (cooridint == 5)
+            {
+                t_row = 2;
+                t_col = 10;
+            }
+            else if (cooridint == 6)
+            {
+                t_row = 2;
+                t_col = 12;
+            }
+            else if (cooridint == 7)
+            {
+                t_row = 2;
+                t_col = 14;
+            }
+            else if (cooridint == 8)
+            {
+                t_row = 2;
+                t_col = 16;
+            }
+            else if (cooridint == 9)
+            {
+                t_row = 4;
+                t_col = 2;
+            }
+            else if (cooridint == 9)
+            {
+                t_row = 4;
+                t_col = 4;
+            }
+            else if (cooridint == 10)
+            {
+                t_row = 4;
+                t_col = 6;
+            }
+            else if (cooridint == 11)
+            {
+                t_row = 4;
+                t_col = 8;
+            }
+            else if (cooridint == 12)
+            {
+                t_row = 4;
+                t_col = 10;
+            }
+            else if (cooridint == 13)
+            {
+                t_row = 4;
+                t_col = 12;
+            }
+            else if (cooridint == 14)
+            {
+                t_row = 4;
+                t_col = 14;
+            }
+            else if (cooridint == 15)
+            {
+                t_row = 4;
+                t_col = 16;
+            }
+            else if (cooridint == 16)
+            {
+                t_row = 6;
+                t_col = 2;
+            }
+            else if (cooridint == 17)
+            {
+                t_row = 6;
+                t_col = 4;
+            }
+            else if (cooridint == 18)
+            {
+                t_row = 6;
+                t_col = 6;
+            }
+            else if (cooridint == 19)
+            {
+                t_row = 6;
+                t_col = 8;
+            }
+            else if (cooridint == 20)
+            {
+                t_row = 6;
+                t_col = 10;
+            }
+            else if (cooridint == 21)
+            {
+                t_row = 6;
+                t_col = 12;
+            }
+            else if (cooridint == 22)
+            {
+                t_row = 6;
+                t_col = 14;
+            }
+            else if (cooridint == 23)
+            {
+                t_row = 6;
+                t_col = 16;
+            }
+            else if (cooridint == 24)
+            {
+                t_row = 8;
+                t_col = 2;
+            }
+            else if (cooridint == 25)
+            {
+                t_row = 8;
+                t_col = 4;
+            }
+            else if (cooridint == 26)
+            {
+                t_row = 8;
+                t_col = 6;
+            }
+            else if (cooridint == 27)
+            {
+                t_row = 8;
+                t_col = 8;
+            }
+            else if (cooridint == 28)
+            {
+                t_row = 8;
+                t_col = 10;
+            }
+            else if (cooridint == 29)
+            {
+                t_row = 8;
+                t_col = 12;
+            }
+            else if (cooridint == 30)
+            {
+                t_row = 8;
+                t_col = 14;
+            }
+            else if (cooridint == 31)
+            {
+                t_row = 8;
+                t_col = 16;
+            }
+            else if (cooridint == 32)
+            {
+                t_row = 10;
+                t_col = 2;
+            }
+            else if (cooridint == 33)
+            {
+                t_row = 10;
+                t_col = 4;
+            }
+            else if (cooridint == 34)
+            {
+                t_row = 10;
+                t_col = 6;
+            }
+            else if (cooridint == 35)
+            {
+                t_row = 10;
+                t_col = 8;
+            }
+            else if (cooridint == 36)
+            {
+                t_row = 10;
+                t_col = 10;
+            }
+            else if (cooridint == 37)
+            {
+                t_row = 10;
+                t_col = 12;
+            }
+            else if (cooridint == 38)
+            {
+                t_row = 10;
+                t_col = 14;
+            }
+            else if (cooridint == 39)
+            {
+                t_row = 10;
+                t_col = 16;
+            }
+            else if (cooridint == 40)
+            {
+                t_row = 12;
+                t_col = 2;
+            }
+            else if (cooridint == 41)
+            {
+                t_row = 12;
+                t_col = 4;
+            }
+            else if (cooridint == 42)
+            {
+                t_row = 12;
+                t_col = 6;
+            }
+            else if (cooridint == 43)
+            {
+                t_row = 12;
+                t_col = 8;
+            }
+            else if (cooridint == 44)
+            {
+                t_row = 12;
+                t_col = 10;
+            }
+            else if (cooridint == 45)
+            {
+                t_row = 12;
+                t_col = 12;
+            }
+            else if (cooridint == 46)
+            {
+                t_row = 12;
+                t_col = 14;
+            }
+            else if (cooridint == 47)
+            {
+                t_row = 12;
+                t_col = 16;
+            }
+            else if (cooridint == 48)
+            {
+                t_row = 14;
+                t_col = 2;
+            }
+            else if (cooridint == 49)
+            {
+                t_row = 14;
+                t_col = 4;
+            }
+            else if (cooridint == 50)
+            {
+                t_row = 14;
+                t_col = 6;
+            }
+            else if (cooridint == 51)
+            {
+                t_row = 14;
+                t_col = 8;
+            }
+            else if (cooridint == 52)
+            {
+                t_row = 14;
+                t_col = 10;
+            }
+            else if (cooridint == 53)
+            {
+                t_row = 14;
+                t_col = 12;
+            }
+            else if (cooridint == 54)
+            {
+                t_row = 14;
+                t_col = 14;
+            }
+            else if (cooridint == 55)
+            {
+                t_row = 14;
+                t_col = 16;
+            }
+            else if (cooridint == 56)
+            {
+                t_row = 16;
+                t_col = 2;
+            }
+            else if (cooridint == 57)
+            {
+                t_row = 16;
+                t_col = 4;
+            }
+            else if (cooridint == 58)
+            {
+                t_row = 16;
+                t_col = 6;
+            }
+            else if (cooridint == 59)
+            {
+                t_row = 16;
+                t_col = 8;
+            }
+            else if (cooridint == 60)
+            {
+                t_row = 16;
+                t_col = 10;
+            }
+            else if (cooridint == 61)
+            {
+                t_row = 16;
+                t_col = 12;
+            }
+            else if (cooridint == 62)
+            {
+                t_row = 16;
+                t_col = 14;
+            }
+            else if (cooridint == 63)
+            {
+                t_row = 16;
+                t_col = 16;
+            }
+
+        }
     }
 
     class Hint : Game {
