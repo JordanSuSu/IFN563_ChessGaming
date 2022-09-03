@@ -140,7 +140,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     board.transferrowcoltobox(
                         row,
                         col,
-                        this.getPlayerNum(game.num_ChessMove)
+                        this.getPlayerNum(game.num_ChessMove),
+                        game.CurGameType
                         );
                     board.ticboard1();
                     int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
@@ -155,7 +156,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     board.transferrowcoltobox(
                         row,
                         col,
-                        this.getPlayerNum(game.num_ChessMove)
+                        this.getPlayerNum(game.num_ChessMove),
+                        game.CurGameType
                         );
                     board.reversiboard1();
                     // int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
@@ -390,12 +392,16 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          */
         // display the current state of board
         
-        public int transferrowcoltobox(int row, int col, int status)
+        public int transferrowcoltobox(int row, int col, int status, string gt)
         {
-            WriteLine($"[Transferrowcoltobox]:{status}");
+            WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}");
             //Tic Tac Toe
-            if (this.CurGameType == (GameType.tictactoe).ToString()){
-                if (row == 2 && col == 2)
+            if (gt == (GameType.tictactoe).ToString()){
+                int cal_row = (row / 2)-1;
+                int cal_col = (col / 2)-1;
+                int index = cal_row*3 + cal_col;
+                tic_c[index] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
+                /*if (row == 2 && col == 2)
                 {
                     if (status == 2)
                     { tic_c[0] = "\u202FO\u202F"; }
@@ -476,7 +482,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     else
                     { tic_c[8] = "\u202F\u202F\u202F"; }
                 }
-            }else{
+            */}else{
                 int cal_row = (row / 2)-1;
                 int cal_col = (col / 2)-1;
                 int index = cal_row*8 + cal_col;
@@ -1168,6 +1174,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }else{
                 for (int i = 0 ; i < 64 ; i ++)
                     reversi_c[i] = STR_SPACE;
+                
+                // default rule
+                reversi_c[27] = "\u202F\u25CB\u202F";
+                reversi_c[28] = "\u202F\u25CB\u202F";
+                reversi_c[35] = "\u202F\u25CF\u202F";
+                reversi_c[36] = "\u202F\u25CF\u202F";
             }
         }
 
@@ -1223,6 +1235,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             string rowinput = Console.ReadLine();
 
             bool rowresult = Int32.TryParse(rowinput, out tic_rowcoordiantes);
+            tic_rowcoordiantes *= 2; 
             int i = Array.BinarySearch(tic_row, tic_rowcoordiantes);
 
 
@@ -1230,6 +1243,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             {
                 Console.Write("please enter a valid row coordiantes: ");
                 rowresult = Int32.TryParse(ReadLine(), out tic_rowcoordiantes);
+                tic_rowcoordiantes *= 2;
                 i = Array.BinarySearch(tic_row, tic_rowcoordiantes);
             }
 
@@ -1239,14 +1253,15 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
             string colinput = Console.ReadLine();
-
             bool colresult = Int32.TryParse(colinput, out tic_colcoordiantes);
+            tic_colcoordiantes *= 2;
             int j = Array.BinarySearch(tic_col, tic_colcoordiantes);
 
             while (colresult == false || j < 0)
             {
                 Console.Write("please enter a valid column coordiantes: ");
                 colresult = Int32.TryParse(ReadLine(), out tic_colcoordiantes);
+                tic_colcoordiantes *= 2;
                 j = Array.BinarySearch(tic_col, tic_colcoordiantes);
             }
 
@@ -1258,6 +1273,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
             string rowinput = Console.ReadLine();
             bool rowresult = Int32.TryParse(rowinput, out reversi_rowcoordiantes);
+            reversi_rowcoordiantes *= 2;
             int i = Array.BinarySearch(reversi_row, reversi_rowcoordiantes);
 
 
@@ -1265,6 +1281,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             {
                 Console.Write("please enter a valid row coordiantes: ");
                 rowresult = Int32.TryParse(ReadLine(), out reversi_rowcoordiantes);
+                reversi_rowcoordiantes *= 2;
                 i = Array.BinarySearch(reversi_row, reversi_rowcoordiantes);
             }
 
@@ -1275,6 +1292,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
             string colinput = Console.ReadLine();
             bool colresult = Int32.TryParse(colinput, out reversi_colcoordiantes);
+            reversi_colcoordiantes *= 2;
             int j = Array.BinarySearch(reversi_col, reversi_colcoordiantes);
 
             while (colresult == false || j < 0)
@@ -1282,6 +1300,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
                 Console.Write("please enter a valid column coordiantes: ");
                 colresult = Int32.TryParse(ReadLine(), out reversi_colcoordiantes);
+                reversi_colcoordiantes *= 2;
                 j = Array.BinarySearch(reversi_col, reversi_colcoordiantes);
             }
 
