@@ -42,6 +42,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         private int num_ChessMove = 0;
 
         private Move move = new Move();
+        private Hint hint = new Hint();
         private string str_CurGameMode = (GameMode.hvh).ToString();
         private string str_CurGameType = (GameType.reversi).ToString();
         // public Board board = new Board();
@@ -74,6 +75,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }
         }
 
+        public void displayHint(){
+            hint.demo();
+        }
         public Game setGameType(string value, Game game){
             int num_type;
             bool res = int.TryParse(value, out num_type);
@@ -1233,6 +1237,16 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
             string rowinput = Console.ReadLine();
+            
+            // Help system will show when user enter the specific code.
+            HelpSystem:
+            while ( rowinput == "help" ){
+                // display the help system
+                // ....
+
+                Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
+                rowinput = Console.ReadLine();
+            }
 
             bool rowresult = Int32.TryParse(rowinput, out tic_rowcoordiantes);
             tic_rowcoordiantes *= 2; 
@@ -1242,7 +1256,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             while (rowresult == false || i < 0)
             {
                 Console.Write("please enter a valid row coordiantes: ");
-                rowresult = Int32.TryParse(ReadLine(), out tic_rowcoordiantes);
+                rowinput = Console.ReadLine();
+
+                // user enter the specific code for help system
+                if (rowinput == "help") goto HelpSystem;
+
+                rowresult = Int32.TryParse(rowinput, out tic_rowcoordiantes);
                 tic_rowcoordiantes *= 2;
                 i = Array.BinarySearch(tic_row, tic_rowcoordiantes);
             }
@@ -1253,6 +1272,14 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
             string colinput = Console.ReadLine();
+            HelpSystem:
+            while ( colinput == "help" ){
+                // display the help system
+                // ....
+                this.displayHint();
+                Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
+                colinput = Console.ReadLine();
+            }
             bool colresult = Int32.TryParse(colinput, out tic_colcoordiantes);
             tic_colcoordiantes *= 2;
             int j = Array.BinarySearch(tic_col, tic_colcoordiantes);
@@ -1260,7 +1287,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             while (colresult == false || j < 0)
             {
                 Console.Write("please enter a valid column coordiantes: ");
-                colresult = Int32.TryParse(ReadLine(), out tic_colcoordiantes);
+                colinput = Console.ReadLine();
+
+                // user enter the specific code for help system
+                if (colinput == "help") goto HelpSystem;
+                
+                colresult = Int32.TryParse(colinput, out tic_colcoordiantes);
                 tic_colcoordiantes *= 2;
                 j = Array.BinarySearch(tic_col, tic_colcoordiantes);
             }
@@ -1272,6 +1304,15 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
             string rowinput = Console.ReadLine();
+            // Help system will show when user enter the specific code.
+            HelpSystem:
+            while ( rowinput == "help" ){
+                // display the help system
+                // ....
+
+                Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
+                rowinput = Console.ReadLine();
+            }
             bool rowresult = Int32.TryParse(rowinput, out reversi_rowcoordiantes);
             reversi_rowcoordiantes *= 2;
             int i = Array.BinarySearch(reversi_row, reversi_rowcoordiantes);
@@ -1280,6 +1321,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             while (rowresult == false || i < 0)
             {
                 Console.Write("please enter a valid row coordiantes: ");
+                rowinput = Console.ReadLine();
+
+                // user enter the specific code for help system
+                if (rowinput == "help") goto HelpSystem;
+
                 rowresult = Int32.TryParse(ReadLine(), out reversi_rowcoordiantes);
                 reversi_rowcoordiantes *= 2;
                 i = Array.BinarySearch(reversi_row, reversi_rowcoordiantes);
@@ -1291,6 +1337,16 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
             string colinput = Console.ReadLine();
+
+            HelpSystem:
+            while ( colinput == "help" ){
+                // display the help system
+                // ....
+
+                Console.Write("Player" + chessstatus + " Enter col coordiantes: ");
+                colinput = Console.ReadLine();
+            }
+
             bool colresult = Int32.TryParse(colinput, out reversi_colcoordiantes);
             reversi_colcoordiantes *= 2;
             int j = Array.BinarySearch(reversi_col, reversi_colcoordiantes);
@@ -1299,6 +1355,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             {
 
                 Console.Write("please enter a valid column coordiantes: ");
+                colinput = Console.ReadLine();
+
+                // user enter the specific code for help system
+                if (colinput == "help") goto HelpSystem;
+
                 colresult = Int32.TryParse(ReadLine(), out reversi_colcoordiantes);
                 reversi_colcoordiantes *= 2;
                 j = Array.BinarySearch(reversi_col, reversi_colcoordiantes);
@@ -1703,6 +1764,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class Hint : Game {
+        public void demo(){
 
+        }
     }
 }
