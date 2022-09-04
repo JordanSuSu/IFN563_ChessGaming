@@ -13,9 +13,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            // Console.OutputEncoding = System.Text.Encoding.Unicode;
             Game game = new Game();
             Board board = new Board();
+            History history = new History();
             // let user to select which type of game he/she want to play
             WriteLine("Please enter which game you want to play:\n1.Wild tic-tac-toe\n2.Reversi aka Othello");
             game = game.setGameType(ReadLine(), game);
@@ -29,7 +30,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             // WriteLine($"You choose {game.CurGameType} and the game mode is {game.CurGameMode}");
             //board.drawBoard(game);
             // game.drawTest();
-            game.startGame(game, board, player_list);
+            game.startGame(game, board, history, player_list);
         }
     }
 
@@ -124,22 +125,34 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
 
         // start a new game
-        public bool startGame( Game game, Board board, List<Player> player_list){
+        public bool startGame( Game game, Board board, History history, List<Player> player_list){
             //gm: current game mode
             //gt: current game type
 
-            board.initialChessBoard(game);
+            board.initialChessBoard(game, history);
             bool res = false;
             //assume that player1 always be the first player
             player_list[0].reversi_rowinput(1);
             
             if ( game.CurGameType == (GameType.tictactoe).ToString() ){
                 while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.tictactoe] ){
-                    int row = player_list[this.getPlayerNum(game.num_ChessMove)].tic_rowinput(this.getPlayerNum(game.num_ChessMove));
-                    int col = player_list[this.getPlayerNum(game.num_ChessMove)].tic_colinput(this.getPlayerNum(game.num_ChessMove));
+                    
+                    int num_CurPlayrer = this.getPlayerNum(game.num_ChessMove);
+                    int row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
+                    int col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
+                    int num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+                    // check whether this move is valid
+                    while (!history.checkAvailable(num_curMove)){
+                        int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
+                        WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
+                        WriteLine("Please re-enter a valid position!!");
+                        row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
+                        col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
+                        num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+                    }
+                    history.recordHistory(num_curMove, num_CurPlayrer);
                     board.transferrowcoltobox(
-                        row,
-                        col,
+                        num_curMove,
                         this.getPlayerNum(game.num_ChessMove),
                         game.CurGameType
                         );
@@ -151,11 +164,23 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 
             }else{
                 while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.reversi] ){
-                    int row = player_list[this.getPlayerNum(game.num_ChessMove)].reversi_rowinput(this.getPlayerNum(game.num_ChessMove));
-                    int col = player_list[this.getPlayerNum(game.num_ChessMove)].reversi_colinput(this.getPlayerNum(game.num_ChessMove));
+                    int num_CurPlayrer = this.getPlayerNum(game.num_ChessMove);
+                    int row = player_list[num_CurPlayrer].reversi_rowinput(num_CurPlayrer);
+                    int col = player_list[num_CurPlayrer].reversi_colinput(num_CurPlayrer);
+                    int num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+
+                    // check whether this move is valid
+                    while (!history.checkAvailable(num_curMove)){
+                        int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
+                        WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
+                        WriteLine("Please re-enter a valid position!!");
+                        row = player_list[num_CurPlayrer].reversi_rowinput(num_CurPlayrer);
+                        col = player_list[num_CurPlayrer].reversi_colinput(num_CurPlayrer);
+                        num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+                    }
+                    history.recordHistory(num_curMove, num_CurPlayrer);
                     board.transferrowcoltobox(
-                        row,
-                        col,
+                        num_curMove,
                         this.getPlayerNum(game.num_ChessMove),
                         game.CurGameType
                         );
@@ -390,103 +415,28 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          * | >> 
          * " " >> 2,4,6
          */
+
+        // Convert two dimension coordinate to one dimension
+        public int convertCoorSysToOne(int row, int col, string gt){
+            int num_colCount = gt == (GameType.tictactoe).ToString()? 3 : 8 ;
+            return ((row/2)-1)*num_colCount + ((col/2)-1);
+        }
+        // Convert one dimension coordinate to two dimension
+        public int[] convertCoorSysToTwo(int coor, string gt){
+            int num_colCount = gt == (GameType.tictactoe).ToString()? 3 : 8 ;
+            int[] arr_coor = new int[2] { (coor/num_colCount) + 1, (coor%num_colCount) + 1};
+            return arr_coor;
+        }
+
         // display the current state of board
-        
-        public int transferrowcoltobox(int row, int col, int status, string gt)
+        public int transferrowcoltobox(int coor, int status, string gt)
         {
             WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}");
             //Tic Tac Toe
             if (gt == (GameType.tictactoe).ToString()){
-                int cal_row = (row / 2)-1;
-                int cal_col = (col / 2)-1;
-                int index = cal_row*3 + cal_col;
-                tic_c[index] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
-                /*if (row == 2 && col == 2)
-                {
-                    if (status == 2)
-                    { tic_c[0] = "\u202FO\u202F"; }
-                    else if (status == 1)
-                    { tic_c[0] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[0] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 2 && col == 4)
-                {
-                    if (status == 2)
-                    { tic_c[1] = "\u202FO\u202F"; }
-                    else if (status == 1)
-                    { tic_c[1] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[1] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 2 && col == 6)
-                {
-                    if (status == 2)
-                    { tic_c[2] = "\u202FO\u202F"; }
-                    else if (status == 1)
-                    { tic_c[2] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[2] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 4 && col == 2)
-                {
-                    if (status == 2)
-                    { tic_c[3] = "\u202FO\u202F"; }
-                    else if (status == 1)
-                    { tic_c[3] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[3] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 4 && col == 4)
-                {
-                    if (status == 2)
-                    { tic_c[4] = "\u202FO\u202F"; }
-                    else if (status == 1)
-                    { tic_c[4] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[4] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 4 && col == 6)
-                {
-                    if (status == 2)
-                    { tic_c[5] = "\u202FO\u202F"; }
-                    else if (status == 1)
-                    { tic_c[5] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[5] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 6 && col == 2)
-                {
-                    if (status == 2)
-                    { tic_c[6] = "\u202FO\u202F"; }
-                    else if ((status == 1))
-                    { tic_c[6] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[6] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 6 && col == 4)
-                {
-                    if (status == 2)
-                    { tic_c[7] = "\u202FO\u202F"; }
-                    else if ((status == 1))
-                    { tic_c[7] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[7] = "\u202F\u202F\u202F"; }
-                }
-                else if (row == 6 && col == 6)
-                {
-                    if (status == 2)
-                    { tic_c[8] = "\u202FO\u202F"; }
-                    else if ((status == 1))
-                    { tic_c[8] = "\u202FX\u202F"; }
-                    else
-                    { tic_c[8] = "\u202F\u202F\u202F"; }
-                }
-            */}else{
-                int cal_row = (row / 2)-1;
-                int cal_col = (col / 2)-1;
-                int index = cal_row*8 + cal_col;
-                reversi_c[index] = status == 2 ? "\u202F\u25CB\u202F" : status == 1 ? "\u202F\u25CF\u202F" : "\u202F\u202F\u202F";
+                tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
+            }else{
+                reversi_c[coor] = status == 2 ? "\u202F\u25CB\u202F" : status == 1 ? "\u202F\u25CF\u202F" : "\u202F\u202F\u202F";
             }
             
             // 25CB white circle
@@ -544,586 +494,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         }
 
-        public void place(int row, int col, int status)
-        {
-            if (row == 2 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[0] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[0] = "\u202FX\u202F"; }
-                else
-                { reversi_c[0] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[1] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[1] = "\u202FX\u202F"; }
-                else
-                { reversi_c[1] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[2] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[2] = "\u202FX\u202F"; }
-                else
-                { reversi_c[2] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[3] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[3] = "\u202FX\u202F"; }
-                else
-                { reversi_c[3] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[4] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[4] = "\u202FX\u202F"; }
-                else
-                { reversi_c[4] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[5] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[5] = "\u202FX\u202F"; }
-                else
-                { reversi_c[5] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[6] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[6] = "\u202FX\u202F"; }
-                else
-                { reversi_c[6] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 2 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[7] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[7] = "\u202FX\u202F"; }
-                else
-                { reversi_c[7] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[8] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[8] = "\u202FX\u202F"; }
-                else
-                { reversi_c[8] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[9] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[9] = "\u202FX\u202F"; }
-                else
-                { reversi_c[9] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[10] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[10] = "\u202FX\u202F"; }
-                else
-                { reversi_c[10] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[11] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[11] = "\u202FX\u202F"; }
-                else
-                { reversi_c[11] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[12] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[12] = "\u202FX\u202F"; }
-                else
-                { reversi_c[12] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[13] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[13] = "\u202FX\u202F"; }
-                else
-                { reversi_c[13] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[14] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[14] = "\u202FX\u202F"; }
-                else
-                { reversi_c[14] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 4 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[16] = "\u202FO\u202F"; }
-                else if (status == 1)
-                { reversi_c[16] = "\u202FX\u202F"; }
-                else
-                { reversi_c[16] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[17] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[17] = "\u202FX\u202F"; }
-                else
-                { reversi_c[17] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[17] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[17] = "\u202FX\u202F"; }
-                else
-                { reversi_c[17] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[18] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[18] = "\u202FX\u202F"; }
-                else
-                { reversi_c[18] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[19] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[19] = "\u202FX\u202F"; }
-                else
-                { reversi_c[19] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[20] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[20] = "\u202FX\u202F"; }
-                else
-                { reversi_c[20] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[21] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[21] = "\u202FX\u202F"; }
-                else
-                { reversi_c[21] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[22] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[22] = "\u202FX\u202F"; }
-                else
-                { reversi_c[22] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 6 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[23] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[23] = "\u202FX\u202F"; }
-                else
-                { reversi_c[23] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[24] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[24] = "\u202FX\u202F"; }
-                else
-                { reversi_c[24] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[25] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[25] = "\u202FX\u202F"; }
-                else
-                { reversi_c[25] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[26] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[26] = "\u202FX\u202F"; }
-                else
-                { reversi_c[26] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[27] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[27] = "\u202FX\u202F"; }
-                else
-                { reversi_c[27] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[28] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[28] = "\u202FX\u202F"; }
-                else
-                { reversi_c[28] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[29] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[29] = "\u202FX\u202F"; }
-                else
-                { reversi_c[29] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[30] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[30] = "\u202FX\u202F"; }
-                else
-                { reversi_c[30] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 8 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[31] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[31] = "\u202FX\u202F"; }
-                else
-                { reversi_c[31] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[32] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[32] = "\u202FX\u202F"; }
-                else
-                { reversi_c[32] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[33] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[33] = "\u202FX\u202F"; }
-                else
-                { reversi_c[33] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[34] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[34] = "\u202FX\u202F"; }
-                else
-                { reversi_c[34] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[35] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[35] = "\u202FX\u202F"; }
-                else
-                { reversi_c[35] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[36] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[36] = "\u202FX\u202F"; }
-                else
-                { reversi_c[36] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[37] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[37] = "\u202FX\u202F"; }
-                else
-                { reversi_c[37] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[38] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[38] = "\u202FX\u202F"; }
-                else
-                { reversi_c[38] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 10 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[39] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[39] = "\u202FX\u202F"; }
-                else
-                { reversi_c[39] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[40] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[40] = "\u202FX\u202F"; }
-                else
-                { reversi_c[40] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[41] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[41] = "\u202FX\u202F"; }
-                else
-                { reversi_c[41] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[42] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[42] = "\u202FX\u202F"; }
-                else
-                { reversi_c[42] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[43] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[43] = "\u202FX\u202F"; }
-                else
-                { reversi_c[43] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[44] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[44] = "\u202FX\u202F"; }
-                else
-                { reversi_c[44] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[45] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[45] = "\u202FX\u202F"; }
-                else
-                { reversi_c[45] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[46] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[46] = "\u202FX\u202F"; }
-                else
-                { reversi_c[46] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 12 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[47] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[47] = "\u202FX\u202F"; }
-                else
-                { reversi_c[47] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[48] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[48] = "\u202FX\u202F"; }
-                else
-                { reversi_c[48] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[49] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[49] = "\u202FX\u202F"; }
-                else
-                { reversi_c[49] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[50] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[50] = "\u202FX\u202F"; }
-                else
-                { reversi_c[50] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[51] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[51] = "\u202FX\u202F"; }
-                else
-                { reversi_c[51] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[52] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[52] = "\u202FX\u202F"; }
-                else
-                { reversi_c[52] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[53] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[53] = "\u202FX\u202F"; }
-                else
-                { reversi_c[53] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[54] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[54] = "\u202FX\u202F"; }
-                else
-                { reversi_c[54] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 14 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[55] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[55] = "\u202FX\u202F"; }
-                else
-                { reversi_c[55] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 2)
-            {
-                if (status == 2)
-                { reversi_c[56] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[56] = "\u202FX\u202F"; }
-                else
-                { reversi_c[56] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 4)
-            {
-                if (status == 2)
-                { reversi_c[57] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[57] = "\u202FX\u202F"; }
-                else
-                { reversi_c[57] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 6)
-            {
-                if (status == 2)
-                { reversi_c[58] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[58] = "\u202FX\u202F"; }
-                else
-                { reversi_c[58] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 8)
-            {
-                if (status == 2)
-                { reversi_c[59] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[59] = "\u202FX\u202F"; }
-                else
-                { reversi_c[59] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 10)
-            {
-                if (status == 2)
-                { reversi_c[60] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[60] = "\u202FX\u202F"; }
-                else
-                { reversi_c[60] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 12)
-            {
-                if (status == 2)
-                { reversi_c[61] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[61] = "\u202FX\u202F"; }
-                else
-                { reversi_c[61] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 14)
-            {
-                if (status == 2)
-                { reversi_c[62] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[62] = "\u202FX\u202F"; }
-                else
-                { reversi_c[62] = "\u202F\u202F\u202F"; }
-            }
-            else if (row == 16 && col == 16)
-            {
-                if (status == 2)
-                { reversi_c[63] = "\u202FO\u202F"; }
-                else if ((status == 1))
-                { reversi_c[63] = "\u202FX\u202F"; }
-                else
-                { reversi_c[63] = "\u202F\u202F\u202F"; }
-            }
-        }
-
         public void reversiboard1()
         {
             Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
@@ -1167,7 +537,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
 
         // clean the content save in the tic_coordi
-        public void initialChessBoard(Game game){
+        public void initialChessBoard(Game game, History history){
             if (game.CurGameType == (GameType.tictactoe).ToString()){
                 for (int i = 0 ; i < 9 ; i ++)
                     tic_c[i] = STR_SPACE;
@@ -1175,11 +545,16 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 for (int i = 0 ; i < 64 ; i ++)
                     reversi_c[i] = STR_SPACE;
                 
-                // default rule
+                int[] arr_defalutCoor = new int[] {27, 28, 35, 36};
+                // // set up default rule
+                // for (int i = 0; i < arr_defalutCoor.Length; i ++){
+                //     reversi_c[arr_defalutCoor[i]] = "\u202F\u25CB\u202F";
+                // }
                 reversi_c[27] = "\u202F\u25CB\u202F";
                 reversi_c[28] = "\u202F\u25CB\u202F";
                 reversi_c[35] = "\u202F\u25CF\u202F";
                 reversi_c[36] = "\u202F\u25CF\u202F";
+
             }
         }
 
@@ -1199,10 +574,33 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class History : Board{
+        // each move will be recorded by three digit code
+        // first digit: player number
+        // last two digit: one dimension position
         //Save all moves
-        protected Stack<string> forwardTrack = new Stack<string>();
+        protected Stack<int> forwardTrack = new Stack<int>();
         //Save the moves which are undo by user
-        protected Queue<string> backTrack = new Queue<string>();
+        protected Queue<int> backTrack = new Queue<int>();
+
+        public bool checkAvailable(int coor){
+            // check whether that position is empty
+            // true: available
+            // false: there already exist a chess at this position
+            WriteLine($"[checkAvailable]: coor:{forwardTrack.Contains(coor)}");
+            bool res = true;
+            foreach ( int item in forwardTrack ){
+                if (item%100 == coor){
+                    res = false;
+                    return res;
+                }
+            }
+            return res;
+        }
+
+        public void recordHistory(int coor, int num_player){
+            forwardTrack.Push(coor+100*num_player);
+            WriteLine($"[recordHistory]: track:{forwardTrack.Count()}");
+        }
     }
 
     class Chess : Board {
