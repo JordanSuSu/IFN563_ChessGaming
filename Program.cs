@@ -13,7 +13,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     {
         static void Main(string[] args)
         {
-            // Console.OutputEncoding = System.Text.Encoding.Unicode;
+            // detect which operating system is
+            bool isWindows=System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+            if (isWindows) Console.OutputEncoding = System.Text.Encoding.Unicode;
+            
             Game game = new Game();
             Board board = new Board();
             History history = new History();
