@@ -16,6 +16,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.OutputEncoding = System.Text.Encoding.Unicode;
             Game game = new Game();
             Board board = new Board();
+<<<<<<< Updated upstream
+=======
+            History history = new History();
+            Hint.showMenu();
+>>>>>>> Stashed changes
             // let user to select which type of game he/she want to play
             WriteLine("Please enter which game you want to play:\n1.Wild tic-tac-toe\n2.Reversi aka Othello");
             game = game.setGameType(ReadLine(), game);
@@ -1188,7 +1193,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public int counter = 1;
         public int k = 0;
         public static string[] tic_c = new string[9]; //saving chess at each position
+        public static string[] demo_tic_c = new string[9]; //saving chess at each position for demo
         public static string[] reversi_c = new string[64]; //saving chess at each position
+        public static string[] demo_reversi_c = new string[64]; //saving chess at each position for demo
 
         private List<int> rowcolstatuslist = new List<int>();
         public List<int> Rowcolstatuslist
@@ -1702,7 +1709,188 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
     }
 
-    class Hint : Game {
+
+    class Hint : Game
+    {
+        private static void mainMenu()
+        {
+            Console.WriteLine("Menu:");
+            Console.WriteLine("Please enter your option!");
+
+            Console.WriteLine("1.Save");
+            Console.WriteLine("2.Load");
+            Console.WriteLine("3.Undo");
+            Console.WriteLine("4.Redo");
+            Console.WriteLine("5.Helping System");
+            Console.WriteLine("6.Exit");
+            Console.WriteLine("\n");
+
+        }
+
+
+        public static void showMenu()
+        {
+            bool showMenu = true;
+
+            while (showMenu)
+            {
+                mainMenu();
+
+                string playerChoice = Console.ReadLine();
+
+                switch (playerChoice)
+                {
+                    case "1":
+                        Console.WriteLine("Save");
+                        break;
+
+                    case "2":
+                        Console.WriteLine("Load");
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Undo");
+                        break;
+
+                    case "4":
+                        Console.WriteLine("Redo");
+                        break;
+
+                    case "5":
+                        HelpingSystem.showMenu();
+                        break;
+
+                    case "6":
+                        showMenu = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Please enter a valid number.");
+                        break;
+                }
+            }
+        }
+    }
+
+    class HelpingSystem : Hint
+    {
+        private static void help(Game game)
+        {
+            Console.WriteLine("Helping System:");
+            Console.WriteLine("This is the rule of {0}.", game.CurGameType);
+            Console.WriteLine("Please enter 'B' to back to meun...");
+            Console.WriteLine("\n");
+        }
+        public static void showHelp(Game game, Board board)
+        {
+            //bool showHelp = true;
+
+            if (game.CurGameType == (GameType.tictactoe).ToString())
+            {
+                help();
+
+                //string optionForHelp = Console.ReadLine();
+
+                        int[]  tac_0= new int[] {}
+                        int[]  tac_fir= new int[] {204}
+                        int[]  tac_sec= new int[] {204,102}
+                        int[]  tac_hor= new int[] {203,204,205}
+                        int[]  tac_ver= new int[] {201,204,207}
+                        int[]  tac_diag= new int[] {202,204,206}
+                        int[]  tac_full= new int[] {200,101,102,103,204,205,206,207,108}
+
+
+                        Console.WriteLine("The Rule of Wild tic-tac-toe");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("This is a 3-by-3 grid game.");
+                        Console.WriteLine("\n");
+                        
+                        drawBoard(game, board, tac_0);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("The player who is playing" + "X" + "always goes first.");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("For example: the first player place the X on the board of middle.");
+                        
+                        drawBoard(game, board, tac_fir);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Then, the second player can place O in any empty square on the board. ");
+                        Console.WriteLine("\n");
+                        
+                        drawBoard(game, board, tac_first);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " +
+                            "horizontally, vertically, or diagonally or until all squares on the grid are filled.");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("Therefore, there are FOUR result in Wild tic-tac-toe.");
+                        Console.WriteLine("\n");
+                        Console.WriteLine("The First Result: Horizontally");
+
+                        drawBoard(game, board, tac_hor);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("The Second Result: Vertically");
+
+                        drawBoard(game, board, tac_ver);
+                        Console.WriteLine("\n");
+                        Console.WriteLine("The Third Result: Diagonally");
+                        
+                        drawBoard(game, board, tac_diag);
+
+                        Console.WriteLine("\n");
+                        Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED");
+                        drawBoard(game, board, tac_full);
+            }
+
+            else 
+
+            {
+                int[]  rsversi_0= new int[] {}
+                
+
+                Console.WriteLine("The Rule of Reversi aka Othello");
+                Console.WriteLine("\n");
+                Console.WriteLine("This is a 8-by-8 grid game.");
+                Console.WriteLine("\n");
+                Console.WriteLine("Each of the disks' two sides corresponds to one player.");
+                Console.WriteLine("For the specific game of Othello, the game begins with four disks placed in a square in the middle of the grid, two facing light-side-up, two dark-side-up,"
+                +"so that the same-colored disks are on a diagonal. Convention has this such that the dark-side-up disks are to the north-east and south-west (from both players' perspectives),"
+                +" though this is only marginally consequential: where sequential openings' memorization is preferred, such players benefit from this. The dark player moves first.");
+                Console.WriteLine("\n");
+                Console.WriteLine("The initial board.");
+
+
+
+
+
+
+
+
+            }
+                        
+
+
+
+
+            else 
+            {
+                Console.WriteLine("Please enter a valid number.");
+                        break;
+            }
+                        
+            
+            }
+        }
+
+        public static void drawDemoBoard(Game game, Board board, int[] arr_coor){
+            if (game.CurGameType == (GameType.tictactoe).ToString())
+            {
+                tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F";
+            }
+            else
+            {
+                reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F";
+
+            }
+        
 
     }
 }
