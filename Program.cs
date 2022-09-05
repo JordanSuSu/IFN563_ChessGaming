@@ -132,11 +132,13 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
 
         // tmp for displaying info
-        public void disPlayInfo(int num_code, Board board, History history, string gt){
+        public void disPlayInfo(int num_code, Board board, History history, Game game){
+            string gt = game.CurGameType;
             string str_code = STR_FUNCODE[num_code-996];
             if (str_code == STR_FUNCODE[0]){
                 // undo
                 if (history.unDoMove()){
+                    board.syncBoard(history, board, game);
                     board.drawBoard(gt);
                 }else{
                     WriteLine("There is something wrong during UN-DO process!!");
@@ -145,6 +147,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }else if (str_code == STR_FUNCODE[1]){
                 // redo
                 if (history.reDoMove()){
+                    board.syncBoard(history, board, game);
                     board.drawBoard(gt);
                 }else{
                     WriteLine("There is something wrong during RE-DO process!!");
@@ -159,7 +162,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }else{
                 // load
                 if (history.loadGame()){
+                    game.num_ChessMove += history.forwardTrack.Count();
+                    board.syncBoard(history, board, game);
                     board.drawBoard(gt);
+                    // history.backTrack.Clear();
+                    // history.forwardTrack.Clear();
                 }else{
                     WriteLine("There is something wrong during LOAD GAME process!!");
                 }
@@ -180,11 +187,15 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.tictactoe] ){
                     start:
                     int num_CurPlayrer = this.getPlayerNum(game.num_ChessMove);
+                    // user choose play with computer
+                    if (num_CurPlayrer % 2 ==0 && game.CurGameMode == (GameMode.cvh).ToString()){
+                        player_list[num_CurPlayrer].tictactoerandom();
+                    }
                     int row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
-                    if (row >= 996) {disPlayInfo(row, board, history, game.CurGameType); continue;}; // display the help system menu
+                    if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
 
                     int col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
-                    if (row >= 996) {disPlayInfo(col, board, history, game.CurGameType); continue; } // display the help system menu
+                    if (col >= 996) {disPlayInfo(col, board, history, game); continue; } // display the help system menu
 
                     int num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                     // check whether this move is valid
@@ -193,10 +204,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
                         WriteLine("Please re-enter a valid position!!");
                         row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
-                        if (row >= 996) {disPlayInfo(row, board, history, game.CurGameType); goto start;} // display the help system menu
+                        if (row >= 996) {disPlayInfo(row, board, history, game); goto start;} // display the help system menu
 
                         col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
-                        if (row >= 996) {disPlayInfo(col, board, history, game.CurGameType); goto start;} // display the help system menu
+                        if (col >= 996) {disPlayInfo(col, board, history, game); goto start;} // display the help system menu
 
                         num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                     }
@@ -481,7 +492,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // display the current state of board
         public int transferrowcoltobox(int coor, int status, string gt)
         {
-            WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}");
+            WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}---{coor}");
             //Tic Tac Toe
             if (gt == (GameType.tictactoe).ToString()){
                 tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
@@ -496,9 +507,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             return 0;
         }
 
-        // update current board by the forwardtrack
-        public void updateBoard(History history, Board board, Game game){
-
+        // sync the board and track stack
+        public void syncBoard(History history, Board board, Game game){
+            board.initialChessBoard(game);
+            foreach (int item in history.forwardTrack){
+                board.transferrowcoltobox(item%100, item/100, game.CurGameType);
+            }
         }
 
         // dispaly the current board
@@ -597,9 +611,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // first digit: player number
         // last two digit: one dimension position
         //Save all moves
-        protected Stack<int> forwardTrack = new Stack<int>();
+        public Stack<int> forwardTrack = new Stack<int>();
         //Save the moves which are undo by user
-        protected Queue<int> backTrack = new Queue<int>();
+        public Stack<int> backTrack = new Stack<int>();
 
         public bool checkAvailable(int coor){
             // check whether that position is empty
@@ -629,7 +643,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             int num_preMove = forwardTrack.Pop();
             WriteLine($"[unDoMove]: preMove:{num_preMove}");
-            backTrack.Enqueue(num_preMove);
+            backTrack.Push(num_preMove);
             return true;
         }
 
@@ -639,7 +653,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             // if there is no next position can be return then return -1
             if (backTrack.Count() == 0) return false;
 
-            int num_nextMove = backTrack.Dequeue();
+            int num_nextMove = backTrack.Pop();
+            WriteLine($"[reDoMove]: nextMove:{num_nextMove}");
             forwardTrack.Push(num_nextMove);
             return true;
         }
@@ -701,6 +716,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         virtual public int tic_colinput(int chessstatus){ return 0; }
         virtual public int reversi_rowinput(int chessstatus){ return 0; }
         virtual public int reversi_colinput(int chessstatus){ return 0; }
+
+        virtual public void tictactoerandom(){}
+        virtual public void reversirandom(){}
     }
 
     class Human : Player{
@@ -809,7 +827,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class Computer : Player{
-        public void tictactoerandom()
+        override public void tictactoerandom()
         {
             Random rand = new Random();
 
@@ -866,7 +884,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }
         }
 
-        public void reversirandom()
+        override public void reversirandom()
         {
             Random rand = new Random();
 
