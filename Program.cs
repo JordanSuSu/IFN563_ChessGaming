@@ -41,6 +41,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // maximum number of each type of game
         readonly int[] NUM_MAXMOVE = new int[3] {0, 9, 64};
 
+        // specific code for function
+        // 999: load, 998: save, 997: redo, 996: undo
+        public string[] STR_FUNCODE = new string[] {"undo", "redo", "save", "load"};
+
         // record the status of this game
         // odd number is player1, even number is player2
         private int num_ChessMove = 0;
@@ -127,22 +131,61 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             return val%2==0?1:2;
         }
 
+        // tmp for displaying info
+        public void disPlayInfo(int num_code, Board board, History history, string gt){
+            string str_code = STR_FUNCODE[num_code-996];
+            if (str_code == STR_FUNCODE[0]){
+                // undo
+                if (history.unDoMove()){
+                    board.drawBoard(gt);
+                }else{
+                    WriteLine("There is something wrong during UN-DO process!!");
+                }
+                
+            }else if (str_code == STR_FUNCODE[1]){
+                // redo
+                if (history.reDoMove()){
+                    board.drawBoard(gt);
+                }else{
+                    WriteLine("There is something wrong during RE-DO process!!");
+                }
+            }else if (str_code == STR_FUNCODE[2]){
+                // save
+                if (history.saveGame()){
+                    WriteLine("Save Success!!");
+                }else{
+                    WriteLine("There is something wrong during SAVE GAME process!!");
+                }
+            }else{
+                // load
+                if (history.loadGame()){
+                    board.drawBoard(gt);
+                }else{
+                    WriteLine("There is something wrong during LOAD GAME process!!");
+                }
+            }
+        }
+
         // start a new game
         public bool startGame( Game game, Board board, History history, List<Player> player_list){
             //gm: current game mode
             //gt: current game type
 
-            board.initialChessBoard(game, history);
+            board.initialChessBoard(game);
             bool res = false;
             //assume that player1 always be the first player
             player_list[0].reversi_rowinput(1);
             
             if ( game.CurGameType == (GameType.tictactoe).ToString() ){
                 while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.tictactoe] ){
-                    
+                    start:
                     int num_CurPlayrer = this.getPlayerNum(game.num_ChessMove);
                     int row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
+                    if (row >= 996) {disPlayInfo(row, board, history, game.CurGameType); continue;}; // display the help system menu
+
                     int col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
+                    if (row >= 996) {disPlayInfo(col, board, history, game.CurGameType); continue; } // display the help system menu
+
                     int num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                     // check whether this move is valid
                     while (!history.checkAvailable(num_curMove)){
@@ -150,7 +193,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
                         WriteLine("Please re-enter a valid position!!");
                         row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
+                        if (row >= 996) {disPlayInfo(row, board, history, game.CurGameType); goto start;} // display the help system menu
+
                         col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
+                        if (row >= 996) {disPlayInfo(col, board, history, game.CurGameType); goto start;} // display the help system menu
+
                         num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                     }
                     history.recordHistory(num_curMove, num_CurPlayrer);
@@ -159,7 +206,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         this.getPlayerNum(game.num_ChessMove),
                         game.CurGameType
                         );
-                    board.ticboard1();
+                    board.drawBoard(game.CurGameType);
                     int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
                     if ( num_GameRes != 0 ) break;
                     game.changeStatus(game, 1);
@@ -187,7 +234,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         this.getPlayerNum(game.num_ChessMove),
                         game.CurGameType
                         );
-                    board.reversiboard1();
+                    board.drawBoard(game.CurGameType);
                     // int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
                     int num_GameRes = 0;
                     if ( num_GameRes != 0 ) break;
@@ -439,16 +486,27 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             if (gt == (GameType.tictactoe).ToString()){
                 tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
             }else{
-                reversi_c[coor] = status == 2 ? "\u202F\u25CB\u202F" : status == 1 ? "\u202F\u25CF\u202F" : "\u202F\u202F\u202F";
+                reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : "\u202F\u202F\u202F";
             }
             
-            // 25CB white circle
-            // 25CF black circle
+            // 25CB black circle
+            // 25CF white circle
 
 
             return 0;
         }
-        public void ticboard1()
+
+        // update current board by the forwardtrack
+        public void updateBoard(History history, Board board, Game game){
+
+        }
+
+        // dispaly the current board
+        public void drawBoard(string gt){
+            if (gt == (GameType.tictactoe).ToString()) ticboard1();
+            else reversiboard1();
+        }
+        private void ticboard1()
         {
 
             Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
@@ -487,17 +545,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
          * - >> 1,3,5,7,9,11,13,15,17
          * | >> 2,4,6,8,10,12,14,16
          */
-        public void initialreversi()
-        {
 
-            reversi_c[27] = "\u202FO\u202F";
-            reversi_c[28] = "\u202FO\u202F";
-            reversi_c[35] = "\u202FX\u202F";
-            reversi_c[36] = "\u202FX\u202F";
-
-        }
-
-        public void reversiboard1()
+        private void reversiboard1()
         {
             Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
             Console.WriteLine("Col: 2, 4, 6, 8, 10, 12, 14, 16");
@@ -540,7 +589,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
 
         // clean the content save in the tic_coordi
-        public void initialChessBoard(Game game, History history){
+        public void initialChessBoard(Game game){
             if (game.CurGameType == (GameType.tictactoe).ToString()){
                 for (int i = 0 ; i < 9 ; i ++)
                     tic_c[i] = STR_SPACE;
@@ -553,9 +602,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 // for (int i = 0; i < arr_defalutCoor.Length; i ++){
                 //     reversi_c[arr_defalutCoor[i]] = "\u202F\u25CB\u202F";
                 // }
-                reversi_c[27] = "\u202F\u25CB\u202F";
+                reversi_c[27] = "\u202F\u25CF\u202F";
                 reversi_c[28] = "\u202F\u25CB\u202F";
-                reversi_c[35] = "\u202F\u25CF\u202F";
+                reversi_c[35] = "\u202F\u25CB\u202F";
                 reversi_c[36] = "\u202F\u25CF\u202F";
 
             }
@@ -604,6 +653,64 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             forwardTrack.Push(coor+100*num_player);
             WriteLine($"[recordHistory]: track:{forwardTrack.Count()}");
         }
+
+        // UnDo
+        public bool unDoMove(){
+            // return previous position
+            // if there is no previous position can be return then return -1
+            if (forwardTrack.Count()==0) return false;
+
+            int num_preMove = forwardTrack.Pop();
+            WriteLine($"[unDoMove]: preMove:{num_preMove}");
+            backTrack.Enqueue(num_preMove);
+            return true;
+        }
+
+        // ReDo
+        public bool reDoMove(){
+            // return previous position
+            // if there is no next position can be return then return -1
+            if (backTrack.Count() == 0) return false;
+
+            int num_nextMove = backTrack.Dequeue();
+            forwardTrack.Push(num_nextMove);
+            return true;
+        }
+
+        // save current game to file
+        public bool saveGame(){
+            Write("Please enter file name: ");
+            string str_fileName = ReadLine()+".txt";
+            string str_content = "";
+            try{
+                foreach (int item in forwardTrack){
+                    str_content += item == forwardTrack.Last() ? Convert.ToString(item) : Convert.ToString(item)+",";
+                }
+                File.WriteAllText(str_fileName, str_content);
+            }catch(Exception ex){
+                WriteLine($"Something is wrong! {ex}");
+                return false;
+            }
+            return true;
+        }
+
+        public bool loadGame(){
+            Write("Please enter the name of file which you want to load it: ");
+            string str_fileName = ReadLine()+".txt";
+            string str_content;
+            try{
+                str_content = File.ReadAllText(str_fileName);
+                string[] str_loadContent = str_content.Split(",");
+                forwardTrack.Clear();
+                for (int i = 0 ; i < str_loadContent.Count() ; i ++){
+                    forwardTrack.Push(Convert.ToInt32(str_loadContent[i]));
+                }
+            }catch(Exception ex){
+                WriteLine($"Something is wrong! {ex}");
+                return false;
+            }
+            return true;
+        }
     }
 
     class Chess : Board {
@@ -634,14 +741,25 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         {
             Console.Write("Player" + chessstatus + " Enter row coordiantes: ");
             string rowinput = Console.ReadLine();
-
             bool rowresult = Int32.TryParse(rowinput, out tic_rowcoordiantes);
             tic_rowcoordiantes *= 2; 
             int i = Array.BinarySearch(tic_row, tic_rowcoordiantes);
 
-
             while (rowresult == false || i < 0)
             {
+                // detect whether user enter the specific code
+                if (STR_FUNCODE.Contains(rowinput.ToLower())){
+                    int num_index;
+                    for (int j = 0 ; j < STR_FUNCODE.Count() ; j++){
+                        if (rowinput == STR_FUNCODE[j])  
+                        {
+                            num_index = j;
+                            WriteLine($"[tic_rowinput]: {num_index}");
+                            return 996+num_index;
+                        }
+                    }
+                }
+
                 Console.Write("please enter a valid row coordiantes: ");
                 rowresult = Int32.TryParse(ReadLine(), out tic_rowcoordiantes);
                 tic_rowcoordiantes *= 2;
@@ -660,6 +778,18 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             while (colresult == false || j < 0)
             {
+                // detect whether user enter the specific code
+                if (STR_FUNCODE.Contains(colinput.ToLower())){
+                    int num_index;
+                    for (int k = 0 ; k < STR_FUNCODE.Count() ; k++){
+                        if (colinput == STR_FUNCODE[k])  
+                        {
+                            num_index = k;
+                            return 996+num_index;
+                        }
+                    }
+                }
+
                 Console.Write("please enter a valid column coordiantes: ");
                 colresult = Int32.TryParse(ReadLine(), out tic_colcoordiantes);
                 tic_colcoordiantes *= 2;
