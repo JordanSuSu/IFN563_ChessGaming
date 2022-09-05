@@ -508,7 +508,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
         private void ticboard1()
         {
-
             Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
             Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_c[0], tic_c[1], tic_c[2]);
             Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
@@ -516,35 +515,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
             Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_c[6], tic_c[7], tic_c[8]);
             Console.WriteLine("\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2518");
-
         }
-        /* 
-           # 1  -----------------
-           # 2  | | | | | | | | |
-           # 3  -----------------
-           # 4  | | | | | | | | |
-           # 5  -----------------
-           # 6  | | | | | | | | |
-           # 7  -----------------
-           # 8  | | | | | | | | |
-           # 9  -----------------
-           # 10 | | | | | | | | |
-           # 11 -----------------
-           # 12 | | | | | | | | |
-           # 13 -----------------
-           # 14 | | | | | | | | |
-           # 15 -----------------
-           # 16 | | | | | | | | |
-           # 17 -----------------
-        
-        */
-
-        /*
-         * column > 17
-         * row > 
-         * - >> 1,3,5,7,9,11,13,15,17
-         * | >> 2,4,6,8,10,12,14,16
-         */
 
         private void reversiboard1()
         {
@@ -598,10 +569,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     reversi_c[i] = STR_SPACE;
                 
                 int[] arr_defalutCoor = new int[] {27, 28, 35, 36};
-                // // set up default rule
-                // for (int i = 0; i < arr_defalutCoor.Length; i ++){
-                //     reversi_c[arr_defalutCoor[i]] = "\u202F\u25CB\u202F";
-                // }
                 reversi_c[27] = "\u202F\u25CF\u202F";
                 reversi_c[28] = "\u202F\u25CB\u202F";
                 reversi_c[35] = "\u202F\u25CB\u202F";
@@ -1234,6 +1201,93 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class Hint : Game {
+        private static void help(Game game) 
+        { 
+            Console.WriteLine("Helping System:"); 
+            Console.WriteLine("This is the rule of {0}.", game.CurGameType); 
+            Console.WriteLine("Please enter 'B' to back to meun..."); 
+            Console.WriteLine("\n"); 
+        } 
+        public void showHelp(Game game, Board board) 
+        { 
+            //bool showHelp = true; 
+            if (game.CurGameType == (GameType.tictactoe).ToString()) 
+            { 
+                help(game);
+                //string optionForHelp = Console.ReadLine(); 
+ 
+                        int[]  tac_0= new int[] {};
+                        int[]  tac_fir= new int[] {204} ;
+                        int[]  tac_sec= new int[] {204,102};
+                        int[]  tac_hor= new int[] {203,204,205};
+                        int[]  tac_ver= new int[] {201,204,207};
+                        int[]  tac_diag= new int[] {202,204,206}; 
+                        int[]  tac_full= new int[] {200,101,102,103,204,205,206,207,108}; 
+ 
+ 
+                        Console.WriteLine("The Rule of Wild tic-tac-toe"); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("This is a 3-by-3 grid game."); 
+                        Console.WriteLine("\n"); 
+                        
+                        setDemoBoard(board, game, tac_0);
+                        board.drawBoard(game.CurGameType); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("The player who is playing" + "X" + "always goes first."); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("For example: the first player place the X on the board of middle."); 
+                         
+                        board.drawBoard(game.CurGameType);  
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("Then, the second player can place O in any empty square on the board. "); 
+                        Console.WriteLine("\n"); 
+                         
+                        board.drawBoard(game.CurGameType); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " + 
+                            "horizontally, vertically, or diagonally or until all squares on the grid are filled."); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("Therefore, there are FOUR result in Wild tic-tac-toe."); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("The First Result: Horizontally"); 
+ 
+                        board.drawBoard(game.CurGameType); 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("The Second Result: Vertically"); 
+ 
+                        board.drawBoard(game.CurGameType);  
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("The Third Result: Diagonally"); 
+                         
+                        board.drawBoard(game.CurGameType); 
+ 
+                        Console.WriteLine("\n"); 
+                        Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED"); 
+                        board.drawBoard(game.CurGameType); 
+            }
+            else
+            { 
+                int[]  rsversi_0= new int[] {};
+                Console.WriteLine("The Rule of Reversi aka Othello"); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("This is a 8-by-8 grid game."); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("Each of the disks' two sides corresponds to one player."); 
+                Console.WriteLine("For the specific game of Othello, the game begins with four disks placed in a square in the middle of the grid, two facing light-side-up, two dark-side-up," 
+                +"so that the same-colored disks are on a diagonal. Convention has this such that the dark-side-up disks are to the north-east and south-west (from both players' perspectives)," 
+                +" though this is only marginally consequential: where sequential openings' memorization is preferred, such players benefit from this. The dark player moves first."); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The initial board.");
+            }             
+             
+        } 
+
+        private void setDemoBoard(Board board, Game game, int[] arr_coor){
+            // fill coordinates of the demo board
+            for (int i = 0 ; i < arr_coor.Count(); i ++){
+                board.transferrowcoltobox(arr_coor[i]%100, arr_coor[i]/100, game.CurGameType);
+            }
+        }
 
     }
 }
