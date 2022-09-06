@@ -43,7 +43,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         // specific code for function
         // 999: load, 998: save, 997: redo, 996: undo
-        public string[] STR_FUNCODE = new string[] {"undo", "redo", "save", "load"};
+        public string[] STR_FUNCODE = new string[] {"undo", "redo", "save", "load", "help"};
 
         // record the status of this game
         // odd number is player1, even number is player2
@@ -159,7 +159,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 }else{
                     WriteLine("There is something wrong during SAVE GAME process!!");
                 }
-            }else{
+            }else if (str_code == STR_FUNCODE[3]){
                 // load
                 if (history.loadGame()){
                     game.num_ChessMove += history.forwardTrack.Count();
@@ -170,6 +170,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 }else{
                     WriteLine("There is something wrong during LOAD GAME process!!");
                 }
+            }else if (str_code == STR_FUNCODE[4]){
+                Hint hint = new Hint();
+                hint.showHelp(game, board);
             }
         }
 
@@ -184,33 +187,38 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             player_list[0].reversi_rowinput(1);
             
             if ( game.CurGameType == (GameType.tictactoe).ToString() ){
+                int row, col, num_curMove;
                 while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.tictactoe] ){
                     start:
                     int num_CurPlayrer = this.getPlayerNum(game.num_ChessMove);
                     // user choose play with computer
                     if (num_CurPlayrer % 2 ==0 && game.CurGameMode == (GameMode.cvh).ToString()){
-                        player_list[num_CurPlayrer].tictactoerandom();
-                    }
-                    int row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
-                    if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
-
-                    int col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
-                    if (col >= 996) {disPlayInfo(col, board, history, game); continue; } // display the help system menu
-
-                    int num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
-                    // check whether this move is valid
-                    while (!history.checkAvailable(num_curMove)){
-                        int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
-                        WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
-                        WriteLine("Please re-enter a valid position!!");
+                        int[] arr_nextMove = player_list[num_CurPlayrer].tictactoerandom();
+                        row = arr_nextMove[0];
+                        col = arr_nextMove[1];
+                    }else{
+                        // user choose play with human
                         row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
-                        if (row >= 996) {disPlayInfo(row, board, history, game); goto start;} // display the help system menu
+                        if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
 
                         col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
-                        if (col >= 996) {disPlayInfo(col, board, history, game); goto start;} // display the help system menu
+                        if (col >= 996) {disPlayInfo(col, board, history, game); continue; } // display the help system menu
 
                         num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+                        // check whether this move is valid
+                        while (!history.checkAvailable(num_curMove)){
+                            int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
+                            WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
+                            WriteLine("Please re-enter a valid position!!");
+                            row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
+                            if (row >= 996) {disPlayInfo(row, board, history, game); goto start;} // display the help system menu
+
+                            col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
+                            if (col >= 996) {disPlayInfo(col, board, history, game); goto start;} // display the help system menu
+                        }
                     }
+                    WriteLine($"-->{row},{col}");
+                    num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                     history.recordHistory(num_curMove, num_CurPlayrer);
                     board.transferrowcoltobox(
                         num_curMove,
@@ -225,20 +233,32 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 
             }else{
                 while(game.num_ChessMove < NUM_MAXMOVE[(int)GameType.reversi] ){
+                    start:
                     int num_CurPlayrer = this.getPlayerNum(game.num_ChessMove);
                     int row = player_list[num_CurPlayrer].reversi_rowinput(num_CurPlayrer);
+                    if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
                     int col = player_list[num_CurPlayrer].reversi_colinput(num_CurPlayrer);
+                    if (col >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
                     int num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
 
-                    // check whether this move is valid
-                    while (!history.checkAvailable(num_curMove)){
-                        int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
-                        WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
-                        WriteLine("Please re-enter a valid position!!");
-                        row = player_list[num_CurPlayrer].reversi_rowinput(num_CurPlayrer);
-                        col = player_list[num_CurPlayrer].reversi_colinput(num_CurPlayrer);
-                        num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+                    if (num_CurPlayrer % 2 ==0 && game.CurGameMode == (GameMode.cvh).ToString()){
+                        int[] arr_nextMove = player_list[num_CurPlayrer].reversirandom();
+                        row = arr_nextMove[0];
+                        col = arr_nextMove[1];
+                    }else{
+                        // check whether this move is valid
+                        while (!history.checkAvailable(num_curMove)){
+                            int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
+                            WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
+                            WriteLine("Please re-enter a valid position!!");
+                            row = player_list[num_CurPlayrer].reversi_rowinput(num_CurPlayrer);
+                            if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
+                            col = player_list[num_CurPlayrer].reversi_colinput(num_CurPlayrer);
+                            if (col >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
+                        }
                     }
+                    num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
+                    
                     history.recordHistory(num_curMove, num_CurPlayrer);
                     board.transferrowcoltobox(
                         num_curMove,
@@ -468,13 +488,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public void checkReversiResult(int t_row, int t_col, int tokenStatus, int moves, Board board, History history,string gt){
             WriteLine($"{t_row},{t_col}");
             int cur_pos = board.convertCoorSysToOne(t_row, t_col, gt);
+            
             // eight position around the current pos
             // topleft, top, topright, left, right, bottomleft, bottom, bottomright
             int[,] arr_curPosAround = new int[,] {{-2, -2}, {-2, 0}, {-2, 2}, {0, -2}, {0, 2}, {2, -2}, {2, 0}, {2, 2}};
-            // for (int i = 0 ; i < arr_curPosAround.Length; i ++){
-            //     t_row += arr_curPosAround[i,0];
-            //     t_col += arr_curPosAround[i,1];
-            // }
 
             int num_newOpponentPos, num_newSelfPos;
             List<int> list_oppositeToken = new List<int>{}; // recode those tokens belong to opponent which will be change color
@@ -492,17 +509,17 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 bool bo_hasSelfToken = num_newSelfPos < 0 ? false : history.forwardTrack.Contains(num_newSelfPos);
                 // WriteLine($"[checkReversi]: {bo_hasOpponentToken}--{bo_hasSelfToken}");
                 // WriteLine($"[checkReversi]: {arr_curPosAround[i,0]}--{arr_curPosAround[i,1]}");
-                WriteLine($"[checkReversi]: {new_row},{new_col}");
-                WriteLine($"[checkReversi]: {num_newPos}");
+                // WriteLine($"[checkReversi]: {new_row},{new_col}");
+                // WriteLine($"[checkReversi]: {num_newPos}");
                 while ( bo_hasOpponentToken || bo_hasSelfToken ){
                     
                     if (bo_hasOpponentToken){
-                        WriteLine($"==={num_newOpponentPos}");
+                        // WriteLine($"==={num_newOpponentPos}");
                         list_oppositeToken.Add(num_newOpponentPos);
                         new_row += arr_curPosAround[i,0];
                         new_col += arr_curPosAround[i,1];
-                        WriteLine($"--->{list_oppositeToken.Count}");
-                        WriteLine($"[checkReversi-While]: {new_row}--{new_col}");
+                        // WriteLine($"--->{list_oppositeToken.Count}");
+                        // WriteLine($"[checkReversi-While]: {new_row}--{new_col}");
                         num_newPos = board.convertCoorSysToOne(new_row, new_col, gt);
                         num_newOpponentPos = num_newPos < 0 ? -1 : num_newPos + num_opponentToken ; // next position of opponent token
                         num_newSelfPos = num_newPos < 0 ? -1 : num_newPos + num_selfToken ; // next position of self token
@@ -589,10 +606,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // display the current state of board
         public int transferrowcoltobox(int coor, int status, string gt)
         {
-            // WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}---{coor}");
+            // WriteLine($"[Transferrowcoltobox]:{status}--{gt}---{coor}");
             //Tic Tac Toe
-            if (CurGameType == (GameType.tictactoe).ToString()){
+            if (gt == (GameType.tictactoe).ToString()){
                 tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
+                // WriteLine($"..{coor}....{tic_c[coor]}");
             }else{
                 reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : status ==3 ?"\u202F\u26B9\u202F": "\u202F\u202F\u202F";
 
@@ -644,8 +662,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         private void reversiboard1()
         {
-            Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
-            Console.WriteLine("Col: 2, 4, 6, 8, 10, 12, 14, 16");
+            // Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
+            // Console.WriteLine("Col: 2, 4, 6, 8, 10, 12, 14, 16");
             Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
             Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[0], reversi_c[1], reversi_c[2], reversi_c[3], reversi_c[4], reversi_c[5], reversi_c[6], reversi_c[7]);
@@ -678,9 +696,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
                 reversi_c[56], reversi_c[57], reversi_c[58], reversi_c[59], reversi_c[60], reversi_c[61], reversi_c[62], reversi_c[63]);
             Console.WriteLine("\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2518");
-
-
-
 
         }
 
@@ -753,7 +768,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             if (forwardTrack.Count()==0) return false;
 
             int num_preMove = forwardTrack.Pop();
-            WriteLine($"[unDoMove]: preMove:{num_preMove}");
+            // WriteLine($"[unDoMove]: preMove:{num_preMove}");
             backTrack.Push(num_preMove);
             return true;
         }
@@ -828,8 +843,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         virtual public int reversi_rowinput(int chessstatus){ return 0; }
         virtual public int reversi_colinput(int chessstatus){ return 0; }
 
-        virtual public void tictactoerandom(){}
-        virtual public void reversirandom(){}
+        virtual public int[] tictactoerandom(){ int[] tmp = new int[] {};return tmp; }
+        virtual public int[] reversirandom(){ int[] tmp = new int[] {};return tmp; }
     }
 
     class Human : Player{
@@ -881,6 +896,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         if (colinput == STR_FUNCODE[k])  
                         {
                             num_index = k;
+                            // WriteLine($"[tic_rowinput]: {num_index}");
                             return 996+num_index;
                         }
                     }
@@ -906,6 +922,18 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             while (rowresult == false || i < 0)
             {
+                // detect whether user enter the specific code
+                if (STR_FUNCODE.Contains(rowinput.ToLower())){
+                    int num_index;
+                    for (int j = 0 ; j < STR_FUNCODE.Count() ; j++){
+                        if (rowinput == STR_FUNCODE[j])  
+                        {
+                            num_index = j;
+                            // WriteLine($"[tic_rowinput]: {num_index}");
+                            return 996+num_index;
+                        }
+                    }
+                }
                 Console.Write("please enter a valid row coordiantes: ");
                 rowresult = Int32.TryParse(ReadLine(), out reversi_rowcoordiantes);
                 reversi_rowcoordiantes *= 2;
@@ -924,7 +952,18 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
             while (colresult == false || j < 0)
             {
-
+                // detect whether user enter the specific code
+                if (STR_FUNCODE.Contains(colinput.ToLower())){
+                    int num_index;
+                    for (int k = 0 ; k < STR_FUNCODE.Count() ; k++){
+                        if (colinput == STR_FUNCODE[k])  
+                        {
+                            num_index = k;
+                            // WriteLine($"[tic_rowinput]: {num_index}");
+                            return 996+num_index;
+                        }
+                    }
+                }
                 Console.Write("please enter a valid column coordiantes: ");
                 colresult = Int32.TryParse(ReadLine(), out reversi_colcoordiantes);
                 reversi_colcoordiantes *= 2;
@@ -938,7 +977,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class Computer : Player{
-        override public void tictactoerandom()
+        override public int[] tictactoerandom()
         {
             Random rand = new Random();
 
@@ -993,9 +1032,11 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 t_row = 6;
                 t_col = 6;
             }
+            int[] arr_nextMove = new int[] {t_row, t_col};
+            return arr_nextMove;
         }
 
-        override public void reversirandom()
+        override public int[] reversirandom()
         {
             Random rand = new Random();
 
@@ -1325,7 +1366,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 t_row = 16;
                 t_col = 16;
             }
-
+        int[] arr_nextMove = new int[] {t_row, t_col};
+        return arr_nextMove;
         }
     }
 
@@ -1335,7 +1377,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.WriteLine("Helping System:"); 
             Console.WriteLine("This is the rule of {0}.", game.CurGameType); 
             Console.WriteLine("Please enter 'B' to back to meun..."); 
-            Console.WriteLine("\n"); 
+            Console.WriteLine("\n");
         } 
         public void showHelp(Game game, Board board) 
         { 
@@ -1365,12 +1407,14 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("The player who is playing" + "X" + "always goes first."); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("For example: the first player place the X on the board of middle."); 
-                         
+
+                setDemoBoard(board, game, tac_fir);
                 board.drawBoard(game.CurGameType);  
                 Console.WriteLine("\n"); 
                 Console.WriteLine("Then, the second player can place O in any empty square on the board. "); 
                 Console.WriteLine("\n"); 
                          
+                setDemoBoard(board, game, tac_sec);
                 board.drawBoard(game.CurGameType); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " + 
@@ -1379,19 +1423,24 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("Therefore, there are FOUR result in Wild tic-tac-toe."); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The First Result: Horizontally"); 
- 
+
+                setDemoBoard(board, game, tac_hor);
                 board.drawBoard(game.CurGameType); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The Second Result: Vertically"); 
- 
+
+                setDemoBoard(board, game, tac_ver);       
                 board.drawBoard(game.CurGameType);  
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The Third Result: Diagonally"); 
-                         
+
+
+                setDemoBoard(board, game, tac_diag);             
                 board.drawBoard(game.CurGameType); 
  
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED"); 
+                setDemoBoard(board, game, tac_fill);
                 board.drawBoard(game.CurGameType); 
             }
             else
@@ -1458,6 +1507,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         private void setDemoBoard(Board board, Game game, int[] arr_coor){ 
             // fill coordinates of the demo board 
             for (int i = 0 ; i < arr_coor.Count(); i ++){ 
+                // WriteLine($"[setDemoBoard]: {i}-{arr_coor[i]}");
                 board.transferrowcoltobox(arr_coor[i]%100, arr_coor[i]/100, game.CurGameType); 
             } 
         } 
