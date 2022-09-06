@@ -497,7 +497,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             if (gt == (GameType.tictactoe).ToString()){
                 tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
             }else{
-                reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : "\u202F\u202F\u202F";
+                reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : status ==3 ?"\u202F\u26B9\u202F": "\u202F\u202F\u202F";
             }
             
             // 25CB black circle
@@ -1235,12 +1235,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 //string optionForHelp = Console.ReadLine(); 
  
                         int[]  tac_0= new int[] {};
-                        int[]  tac_fir= new int[] {204} ;
-                        int[]  tac_sec= new int[] {204,102};
-                        int[]  tac_hor= new int[] {203,204,205};
-                        int[]  tac_ver= new int[] {201,204,207};
-                        int[]  tac_diag= new int[] {202,204,206}; 
-                        int[]  tac_fill= new int[] {200,101,102,103,204,205,206,207,108}; 
+                        int[]  tac_fir= new int[] {104} ;
+                        int[]  tac_sec= new int[] {104,202};
+                        int[]  tac_hor= new int[] {103,104,105};
+                        int[]  tac_ver= new int[] {101,104,107};
+                        int[]  tac_diag= new int[] {102,104,106}; 
+                        int[]  tac_fill= new int[] {100,201,202,203,104,105,106,107,208}; 
  
  
                         Console.WriteLine("The Rule of Wild tic-tac-toe"); 
@@ -1290,11 +1290,13 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }
             else
             { 
-                int[]  rsversi_0= new int[] {227,128,136,235};
-                int[]  rsversi_fir= new int[] {219,226,227,128,136,235,237,243};
+                int[]  rsversi_0= new int[] {227,128,135,236};
+                int[]  rsversi_fir= new int[] {319,326,227,128,135,236,337,343};
                 int[]  rsversi_firDark= new int[] {219,227,228,136,235,};
                 int[]  rsversi_firLight= new int[] {219,227,228,134,136,135,};
                 int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163};
+                int[]  rsversi_ex2= new int[] {201,202,203,204,205,206,207,109,110,111,112,113,215,116,117,118,119,120,121,122,223,124,125,126,127,128,129,130,231,132,133,134,135,136,137,138,239,140,141,142,143,144,145,146,247,148,149,150,151,152,153,154,255,157,158,159,160,161};
+                int[]  rsversi_ex3= new int[] {105,113,114,116,117,118,119,120,121,122,223,126,127,128,129,231,134,135,136,239};
 
 
 
@@ -1308,7 +1310,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The initial board: four disks placed in a square, two light-side pieces; two dark-side pieces.");
                 Console.WriteLine("Same-colored disks are on a diagonal, and the dark-side-up disks are to the north-east and south-west (from both players' perspectives)");
-                int[]  rsversi_0= new int[] {227,128,136,235};
+                setDemoBoard(board, game, rsversi_0);
                 board.drawBoard(game.CurGameType); 
                 
                 Console.WriteLine("\n"); 
@@ -1316,19 +1318,19 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("Dark must place a piece on the board and there exists at least one straight (horizontal, vertical, or diagonal) occupied line between the new piece and another dark piece,"
                  + " with one or more contiguous light pieces between them.");
                 Console.WriteLine("For move one, dark has four options shown by translucently drawn pieces below:"); 
-                int[]  rsversi_fir= new int[] {219,226,227,128,136,235,237,243};
+                setDemoBoard(board, game, rsversi_fir);
                 board.drawBoard(game.CurGameType); 
                 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("After placing the first dark piece, the middle of the light piece would alternate into dark piece. "); 
                 Console.WriteLine("\n"); 
-                int[]  rsversi_firDark= new int[] {219,227,228,136,235,};
+                setDemoBoard(board, game, rsversi_firDark);
                 board.drawBoard(game.CurGameType); 
                 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("Then, placing the  light piece, the middle of the light piece would alternate into dark piece. "); 
                 Console.WriteLine("\n"); 
-                int[]  rsversi_firLight= new int[] {219,227,228,134,135,136,};
+                setDemoBoard(board, game, rsversi_firLight);
                 board.drawBoard(game.CurGameType); 
 
                 Console.WriteLine("Players take alternate turns. If one player cannot make a valid move, play passes back to the other player. When neither player can move, the game ends. "); 
@@ -1337,15 +1339,15 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
                 Console.WriteLine("Example 1:"); 
 
-                int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163};
+                setDemoBoard(board, game, rsversi_ex1);
                 board.drawBoard(game.CurGameType); 
 
                 Console.WriteLine("Example 2:"); 
-                int[]  rsversi_ex2= new int[] {201,202,203,204,205,206,207,109,110,111,112,113,215,116,117,118,119,120,121,122,223,124,125,126,127,128,129,130,231,132,133,134,135,136,137,138,239,140,141,142,143,144,145,146,247,148,149,150,151,152,153,154,255,157,158,159,160,161};
+                setDemoBoard(board, game, rsversi_ex2);
                 board.drawBoard(game.CurGameType); 
 
                 Console.WriteLine("Example 3:"); 
-                int[]  rsversi_ex3= new int[] {105,113,114,116,117,118,119,120,121,122,223,126,127,128,129,231,134,135,136,239};
+                setDemoBoard(board, game, rsversi_ex3);
                 board.drawBoard(game.CurGameType); 
 
 
