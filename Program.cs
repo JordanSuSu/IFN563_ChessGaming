@@ -1222,27 +1222,29 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         int[]  tac_hor= new int[] {203,204,205};
                         int[]  tac_ver= new int[] {201,204,207};
                         int[]  tac_diag= new int[] {202,204,206}; 
-                        int[]  tac_full= new int[] {200,101,102,103,204,205,206,207,108}; 
+                        int[]  tac_fill= new int[] {200,101,102,103,204,205,206,207,108}; 
  
  
                         Console.WriteLine("The Rule of Wild tic-tac-toe"); 
                         Console.WriteLine("\n"); 
                         Console.WriteLine("This is a 3-by-3 grid game."); 
                         Console.WriteLine("\n"); 
-                        
                         setDemoBoard(board, game, tac_0);
                         board.drawBoard(game.CurGameType); 
+
                         Console.WriteLine("\n"); 
                         Console.WriteLine("The player who is playing" + "X" + "always goes first."); 
                         Console.WriteLine("\n"); 
                         Console.WriteLine("For example: the first player place the X on the board of middle."); 
-                         
+                        setDemoBoard(board, game, tac_fir);
                         board.drawBoard(game.CurGameType);  
+
                         Console.WriteLine("\n"); 
                         Console.WriteLine("Then, the second player can place O in any empty square on the board. "); 
                         Console.WriteLine("\n"); 
-                         
+                        setDemoBoard(board, game, tac_sec);
                         board.drawBoard(game.CurGameType); 
+
                         Console.WriteLine("\n"); 
                         Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " + 
                             "horizontally, vertically, or diagonally or until all squares on the grid are filled."); 
@@ -1250,35 +1252,88 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         Console.WriteLine("Therefore, there are FOUR result in Wild tic-tac-toe."); 
                         Console.WriteLine("\n"); 
                         Console.WriteLine("The First Result: Horizontally"); 
- 
+                        setDemoBoard(board, game, tac_hor);
                         board.drawBoard(game.CurGameType); 
+
                         Console.WriteLine("\n"); 
                         Console.WriteLine("The Second Result: Vertically"); 
- 
-                        board.drawBoard(game.CurGameType);  
+                        setDemoBoard(board, game, tac_ver);
+                        board.drawBoard(game.CurGameType); 
+
                         Console.WriteLine("\n"); 
                         Console.WriteLine("The Third Result: Diagonally"); 
-                         
+                        setDemoBoard(board, game, tac_diag);
                         board.drawBoard(game.CurGameType); 
  
                         Console.WriteLine("\n"); 
                         Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED"); 
+                        setDemoBoard(board, game, tac_fill);
                         board.drawBoard(game.CurGameType); 
             }
             else
             { 
-                int[]  rsversi_0= new int[] {};
+                int[]  rsversi_0= new int[] {227,128,136,235};
+                int[]  rsversi_fir= new int[] {219,226,227,128,136,235,237,243};
+                int[]  rsversi_firDark= new int[] {219,227,228,136,235,};
+                int[]  rsversi_firLight= new int[] {219,227,228,134,136,135,};
+                int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163};
+
+
+
+
                 Console.WriteLine("The Rule of Reversi aka Othello"); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("This is a 8-by-8 grid game."); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("Each of the disks' two sides corresponds to one player."); 
-                Console.WriteLine("For the specific game of Othello, the game begins with four disks placed in a square in the middle of the grid, two facing light-side-up, two dark-side-up," 
-                +"so that the same-colored disks are on a diagonal. Convention has this such that the dark-side-up disks are to the north-east and south-west (from both players' perspectives)," 
-                +" though this is only marginally consequential: where sequential openings' memorization is preferred, such players benefit from this. The dark player moves first."); 
+                Console.WriteLine("For the game of Othello, the game begins with four disks placed in a square in the middle of the grid, two light-side-up, two dark-side-up."); 
                 Console.WriteLine("\n"); 
-                Console.WriteLine("The initial board.");
-            }             
+                Console.WriteLine("The initial board: four disks placed in a square, two light-side pieces; two dark-side pieces.");
+                Console.WriteLine("Same-colored disks are on a diagonal, and the dark-side-up disks are to the north-east and south-west (from both players' perspectives)");
+                int[]  rsversi_0= new int[] {227,128,136,235};
+                board.drawBoard(game.CurGameType); 
+                
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The dark player moves first."); 
+                Console.WriteLine("Dark must place a piece on the board and there exists at least one straight (horizontal, vertical, or diagonal) occupied line between the new piece and another dark piece,"
+                 + " with one or more contiguous light pieces between them.");
+                Console.WriteLine("For move one, dark has four options shown by translucently drawn pieces below:"); 
+                int[]  rsversi_fir= new int[] {219,226,227,128,136,235,237,243};
+                board.drawBoard(game.CurGameType); 
+                
+                Console.WriteLine("\n"); 
+                Console.WriteLine("After placing the first dark piece, the middle of the light piece would alternate into dark piece. "); 
+                Console.WriteLine("\n"); 
+                int[]  rsversi_firDark= new int[] {219,227,228,136,235,};
+                board.drawBoard(game.CurGameType); 
+                
+                Console.WriteLine("\n"); 
+                Console.WriteLine("Then, placing the  light piece, the middle of the light piece would alternate into dark piece. "); 
+                Console.WriteLine("\n"); 
+                int[]  rsversi_firLight= new int[] {219,227,228,134,135,136,};
+                board.drawBoard(game.CurGameType); 
+
+                Console.WriteLine("Players take alternate turns. If one player cannot make a valid move, play passes back to the other player. When neither player can move, the game ends. "); 
+                Console.WriteLine("Examples where the game ends before the grid is completely filled:"); 
+                Console.WriteLine("\n"); 
+
+                Console.WriteLine("Example 1:"); 
+
+                int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163};
+                board.drawBoard(game.CurGameType); 
+
+                Console.WriteLine("Example 2:"); 
+                int[]  rsversi_ex2= new int[] {201,202,203,204,205,206,207,109,110,111,112,113,215,116,117,118,119,120,121,122,223,124,125,126,127,128,129,130,231,132,133,134,135,136,137,138,239,140,141,142,143,144,145,146,247,148,149,150,151,152,153,154,255,157,158,159,160,161};
+                board.drawBoard(game.CurGameType); 
+
+                Console.WriteLine("Example 3:"); 
+                int[]  rsversi_ex3= new int[] {105,113,114,116,117,118,119,120,121,122,223,126,127,128,129,231,134,135,136,239};
+                board.drawBoard(game.CurGameType); 
+
+
+
+            }                    
+         
              
         } 
 
