@@ -607,13 +607,17 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public int transferrowcoltobox(int coor, int status, string gt)
         {
             // WriteLine($"[Transferrowcoltobox]:{status}--{gt}---{coor}");
+            bool isWindows=System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
             //Tic Tac Toe
             if (gt == (GameType.tictactoe).ToString()){
                 tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
                 // WriteLine($"..{coor}....{tic_c[coor]}");
             }else{
-                reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : status ==3 ?"\u202F\u26B9\u202F": "\u202F\u202F\u202F";
-
+                if (isWindows){
+                    reversi_c[coor] = status == 2 ? "\u25CF\u202F" : status == 1 ? "\u25CB\u202F" : status ==3 ?"\u26B9\u202F": "\u202F\u202F";
+                }else{
+                    reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : status ==3 ?"\u202F\u26B9\u202F": "\u202F\u202F\u202F";     
+                }
             }
             
             // 25CB black circle
@@ -1505,6 +1509,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }  
  
         private void setDemoBoard(Board board, Game game, int[] arr_coor){ 
+            board.initialChessBoard(game);
             // fill coordinates of the demo board 
             for (int i = 0 ; i < arr_coor.Count(); i ++){ 
                 // WriteLine($"[setDemoBoard]: {i}-{arr_coor[i]}");
