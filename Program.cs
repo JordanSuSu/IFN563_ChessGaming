@@ -218,7 +218,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         game.CurGameType
                         );
                     board.drawBoard(game.CurGameType);
-                    int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
+                    int num_GameRes = move.checkTicTacToeResult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
                     if ( num_GameRes != 0 ) break;
                     game.changeStatus(game, 1);
                 }
@@ -245,10 +245,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         this.getPlayerNum(game.num_ChessMove),
                         game.CurGameType
                         );
+                    move.checkReversiResult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove, board, history, game.CurGameType);
                     board.drawBoard(game.CurGameType);
-                    // int num_GameRes = move.checkresult(row, col, this.getPlayerNum(game.num_ChessMove), game.num_ChessMove);
-                    int num_GameRes = 0;
-                    if ( num_GameRes != 0 ) break;
+                    // int num_GameRes = 0;
+                    // if ( num_GameRes != 0 ) break;
                     game.changeStatus(game, 1);
                 }
             }
@@ -274,7 +274,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // check valid move
 
 
-        public int checkresult(int t_row, int t_col, int chessstatus, int moves)
+        public int checkTicTacToeResult(int t_row, int t_col, int chessstatus, int moves)
         {
             // moves: current number of moves
 
@@ -288,91 +288,140 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             if (t_row == 2 && t_col == 2)
             {
                 if (chessstatus == 1)
-                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                { diagonalcounter1++; 
+                // Console.WriteLine("diagonalcounter1 " + diagonalcounter1); 
+                }
                 else
-                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+                { diagonalcounter2++; 
+                // Console.WriteLine("diagonalcounter2 " + diagonalcounter2); 
+                }
             }
             else if (t_row == 4 && t_col == 4)
             {
                 if (chessstatus == 1)
-                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                { diagonalcounter1++; 
+                // Console.WriteLine("diagonalcounter1 " + diagonalcounter1); 
+                }
                 else
-                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+                { diagonalcounter2++; 
+                // Console.WriteLine("diagonalcounter2 " + diagonalcounter2); 
+                }
             }
             else if (t_row == 6 && t_col == 6)
             {
                 if (chessstatus == 1)
-                { diagonalcounter1++; Console.WriteLine("diagonalcounter1 " + diagonalcounter1); }
+                { diagonalcounter1++; 
+                // Console.WriteLine("diagonalcounter1 " + diagonalcounter1); 
+                }
                 else
-                { diagonalcounter2++; Console.WriteLine("diagonalcounter2 " + diagonalcounter2); }
+                { diagonalcounter2++; 
+                // Console.WriteLine("diagonalcounter2 " + diagonalcounter2); 
+                }
             }
             //diagoanl 2,6 / 4,4 / 6,2
             if (t_row == 2 && t_col == 6)
             {
                 if (chessstatus == 1)
-                { diagonalcounter3++; Console.WriteLine("diagonalcounter3 " + diagonalcounter3); }
+                { diagonalcounter3++; 
+                // Console.WriteLine("diagonalcounter3 " + diagonalcounter3); 
+                }
                 else
-                { diagonalcounter4++; Console.WriteLine("diagonalcounter4 " + diagonalcounter4); }
+                { diagonalcounter4++; 
+                // Console.WriteLine("diagonalcounter4 " + diagonalcounter4); 
+                }
             }
             else if (t_row == 6 && t_col == 2)
             {
                 if (chessstatus == 1)
-                { diagonalcounter3++; Console.WriteLine("diagonalcounter3 " + diagonalcounter3); }
+                { diagonalcounter3++; 
+                // Console.WriteLine("diagonalcounter3 " + diagonalcounter3); 
+                }
+
                 else
-                { diagonalcounter4++; Console.WriteLine("diagonalcounter4 " + diagonalcounter4); }
+                { diagonalcounter4++; 
+                // Console.WriteLine("diagonalcounter4 " + diagonalcounter4); 
+                }
             }
             else if (t_row == 4 && t_col == 4)
             {
                 if (chessstatus == 1)
-                { diagonalcounter3++; Console.WriteLine("diagonalcounter3 " + diagonalcounter3); }
+                { diagonalcounter3++; 
+                // Console.WriteLine("diagonalcounter3 " + diagonalcounter3); 
+                }
                 else
-                { diagonalcounter4++; Console.WriteLine("diagonalcounter4 " + diagonalcounter4); }
+                { diagonalcounter4++; 
+                // Console.WriteLine("diagonalcounter4 " + diagonalcounter4); 
+                }
             }
 
             //row
             if (t_row == 2)
             {
                 if (chessstatus == 1)
-                { row2counter1++; Console.WriteLine("row2counter1 " + row2counter1); }
+                { row2counter1++; 
+                // Console.WriteLine("row2counter1 " + row2counter1); 
+                }
                 else
-                { row2counter2++; Console.WriteLine("row2counter2 " + row2counter2); }
+                { row2counter2++;
+                //  Console.WriteLine("row2counter2 " + row2counter2); 
+                }
             }
             else if (t_row == 4)
             {
                 if (chessstatus == 1)
-                { row4counter1++; Console.WriteLine("row4counter1 " + row4counter1); }
+                { row4counter1++; 
+                // Console.WriteLine("row4counter1 " + row4counter1); 
+                }
                 else
-                { row4counter2++; Console.WriteLine("row4counter2 " + row4counter2); }
+                { row4counter2++; 
+                // Console.WriteLine("row4counter2 " + row4counter2); 
+                }
             }
             else if (t_row == 6)
             {
                 if (chessstatus == 1)
-                { row6counter1++; Console.WriteLine("row6counter1 " + row6counter1); }
+                { row6counter1++; 
+                // Console.WriteLine("row6counter1 " + row6counter1); 
+                }
                 else
-                { row6counter2++; Console.WriteLine("row6counter2 " + row6counter2); }
+                { row6counter2++; 
+                // Console.WriteLine("row6counter2 " + row6counter2); 
+                }
             }
 
             // col
             if (t_col == 2)
             {
                 if (chessstatus == 1)
-                { col2counter1++; Console.WriteLine("col2counter1 " + col2counter1); }
+                { col2counter1++; 
+                // Console.WriteLine("col2counter1 " + col2counter1); 
+                }
                 else
-                { col2counter2++; Console.WriteLine("col2counter2 " + col2counter2); }
+                { col2counter2++; 
+                // Console.WriteLine("col2counter2 " + col2counter2); 
+                }
             }
             else if (t_col == 4)
             {
                 if (chessstatus == 1)
-                { col4counter1++; Console.WriteLine("col4counter1 " + col4counter1); }
+                { col4counter1++; 
+                // Console.WriteLine("col4counter1 " + col4counter1); 
+                }
                 else
-                { col4counter2++; Console.WriteLine("col4counter2 " + col4counter2); }
+                { col4counter2++; 
+                // Console.WriteLine("col4counter2 " + col4counter2); 
+                }
             }
             else if (t_col == 6)
             {
                 if (chessstatus == 1)
-                { col6counter1++; Console.WriteLine("col6counter1 " + col6counter1); }
+                { col6counter1++; 
+                // Console.WriteLine("col6counter1 " + col6counter1); 
+                }
                 else
-                { col6counter2++; Console.WriteLine("col6counter2 " + col6counter2); }
+                { col6counter2++; 
+                // Console.WriteLine("col6counter2 " + col6counter2); 
+                }
             }
 
             if (diagonalcounter1 == 3)
@@ -416,10 +465,57 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         }
 
 
+        public void checkReversiResult(int t_row, int t_col, int tokenStatus, int moves, Board board, History history,string gt){
+            WriteLine($"{t_row},{t_col}");
+            int cur_pos = board.convertCoorSysToOne(t_row, t_col, gt);
+            // eight position around the current pos
+            // topleft, top, topright, left, right, bottomleft, bottom, bottomright
+            int[,] arr_curPosAround = new int[,] {{-2, -2}, {-2, 0}, {-2, 2}, {0, -2}, {0, 2}, {2, -2}, {2, 0}, {2, 2}};
+            // for (int i = 0 ; i < arr_curPosAround.Length; i ++){
+            //     t_row += arr_curPosAround[i,0];
+            //     t_col += arr_curPosAround[i,1];
+            // }
 
-        //Array.Sort(Sportathon.row);
-        //Array.Sort(Sportathon.column);
-        // row --, column ||
+            int num_newOpponentPos, num_newSelfPos;
+            List<int> list_oppositeToken = new List<int>{}; // recode those tokens belong to opponent which will be change color
+            int num_opponentToken = tokenStatus == 1 ? 200 : 100 ; // opponent token status
+            int num_selfToken = tokenStatus*100; // self token status
+            for (int i = 0 ; i < 8 ; i ++){
+                list_oppositeToken.Clear();
+                int new_row = t_row + arr_curPosAround[i,0];
+                int new_col = t_col + arr_curPosAround[i,1];
+                int num_newPos = board.convertCoorSysToOne(new_row, new_col, gt);
+                num_newOpponentPos = num_newPos < 0 ? -1 : num_newPos + num_opponentToken ; // next position of opponent token
+                num_newSelfPos = num_newPos < 0 ? -1 : num_newPos + num_selfToken ; // next position of self token
+
+                bool bo_hasOpponentToken = num_newOpponentPos < 0 ? false : history.forwardTrack.Contains(num_newOpponentPos);
+                bool bo_hasSelfToken = num_newSelfPos < 0 ? false : history.forwardTrack.Contains(num_newSelfPos);
+                // WriteLine($"[checkReversi]: {bo_hasOpponentToken}--{bo_hasSelfToken}");
+                // WriteLine($"[checkReversi]: {arr_curPosAround[i,0]}--{arr_curPosAround[i,1]}");
+                WriteLine($"[checkReversi]: {new_row},{new_col}");
+                WriteLine($"[checkReversi]: {num_newPos}");
+                while ( bo_hasOpponentToken || bo_hasSelfToken ){
+                    
+                    if (bo_hasOpponentToken){
+                        WriteLine($"==={num_newOpponentPos}");
+                        list_oppositeToken.Add(num_newOpponentPos);
+                        new_row += arr_curPosAround[i,0];
+                        new_col += arr_curPosAround[i,1];
+                        WriteLine($"--->{list_oppositeToken.Count}");
+                        WriteLine($"[checkReversi-While]: {new_row}--{new_col}");
+                        num_newPos = board.convertCoorSysToOne(new_row, new_col, gt);
+                        num_newOpponentPos = num_newPos < 0 ? -1 : num_newPos + num_opponentToken ; // next position of opponent token
+                        num_newSelfPos = num_newPos < 0 ? -1 : num_newPos + num_selfToken ; // next position of self token
+
+                        bo_hasOpponentToken = num_newOpponentPos < 0 ? false : history.forwardTrack.Contains(num_newOpponentPos);
+                        bo_hasSelfToken = num_newSelfPos < 0 ? false : history.forwardTrack.Contains(num_newSelfPos);
+                    }else if (bo_hasSelfToken){
+                        board.updateReversiArr(list_oppositeToken);
+                        break;
+                    }
+                }
+            }
+        }
 
 
 
@@ -479,6 +575,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         // Convert two dimension coordinate to one dimension
         public int convertCoorSysToOne(int row, int col, string gt){
+            if (row <= 0 || col <= 0) return -1;
             int num_colCount = gt == (GameType.tictactoe).ToString()? 3 : 8 ;
             return ((row/2)-1)*num_colCount + ((col/2)-1);
         }
@@ -492,12 +589,13 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         // display the current state of board
         public int transferrowcoltobox(int coor, int status, string gt)
         {
-            WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}---{coor}");
+            // WriteLine($"[Transferrowcoltobox]:{status}--{this.CurGameType}---{coor}");
             //Tic Tac Toe
-            if (gt == (GameType.tictactoe).ToString()){
+            if (CurGameType == (GameType.tictactoe).ToString()){
                 tic_c[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
             }else{
                 reversi_c[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : status ==3 ?"\u202F\u26B9\u202F": "\u202F\u202F\u202F";
+
             }
             
             // 25CB black circle
@@ -505,6 +603,19 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
 
             return 0;
+        }
+
+        // update the reversi_c
+        public void updateReversiArr(List<int> arr_pos){
+            WriteLine("Enter UpdateReversiArr");
+            for (int i = 0 ; i < arr_pos.Count() ; i ++){
+                int num_tokenStatus = arr_pos[i] / 100;
+                int num_tokenPos = arr_pos[i] % 100;
+                WriteLine($"[updateReversiArr]: {num_tokenPos}, {num_tokenStatus}");
+                WriteLine($"before:{reversi_c[num_tokenPos]}");
+                reversi_c[num_tokenPos] = num_tokenStatus == 2 ? "\u202F\u25CB\u202F" : "\u202F\u25CF\u202F" ; // reverse the token
+                WriteLine($"after:{reversi_c[num_tokenPos]}");
+            }
         }
 
         // sync the board and track stack
@@ -619,7 +730,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             // check whether that position is empty
             // true: available
             // false: there already exist a chess at this position
-            WriteLine($"[checkAvailable]: coor:{forwardTrack.Contains(coor)}");
+            // WriteLine($"[checkAvailable]: coor:{forwardTrack.Contains(coor)}");
             bool res = true;
             foreach ( int item in forwardTrack ){
                 if (item%100 == coor){
@@ -632,7 +743,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         public void recordHistory(int coor, int num_player){
             forwardTrack.Push(coor+100*num_player);
-            WriteLine($"[recordHistory]: track:{forwardTrack.Count()}");
+            // WriteLine($"[recordHistory]: track:{forwardTrack.Count()}");
         }
 
         // UnDo
@@ -739,7 +850,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         if (rowinput == STR_FUNCODE[j])  
                         {
                             num_index = j;
-                            WriteLine($"[tic_rowinput]: {num_index}");
+                            // WriteLine($"[tic_rowinput]: {num_index}");
                             return 996+num_index;
                         }
                     }
@@ -1234,135 +1345,122 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 help(game);
                 //string optionForHelp = Console.ReadLine(); 
  
-                        int[]  tac_0= new int[] {};
-                        int[]  tac_fir= new int[] {104} ;
-                        int[]  tac_sec= new int[] {104,202};
-                        int[]  tac_hor= new int[] {103,104,105};
-                        int[]  tac_ver= new int[] {101,104,107};
-                        int[]  tac_diag= new int[] {102,104,106}; 
-                        int[]  tac_fill= new int[] {100,201,202,203,104,105,106,107,208}; 
+                int[]  tac_0= new int[] {};
+                int[]  tac_fir= new int[] {104} ;
+                int[]  tac_sec= new int[] {104,202};
+                int[]  tac_hor= new int[] {103,104,105};
+                int[]  tac_ver= new int[] {101,104,107};
+                int[]  tac_diag= new int[] {102,104,106}; 
+                int[]  tac_fill= new int[] {100,201,202,203,104,105,106,107,208}; 
+
  
- 
-                        Console.WriteLine("The Rule of Wild tic-tac-toe"); 
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("This is a 3-by-3 grid game."); 
-                        Console.WriteLine("\n"); 
-                        setDemoBoard(board, game, tac_0);
-                        board.drawBoard(game.CurGameType); 
-
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("The player who is playing" + "X" + "always goes first."); 
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("For example: the first player place the X on the board of middle."); 
-                        setDemoBoard(board, game, tac_fir);
-                        board.drawBoard(game.CurGameType);  
-
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("Then, the second player can place O in any empty square on the board. "); 
-                        Console.WriteLine("\n"); 
-                        setDemoBoard(board, game, tac_sec);
-                        board.drawBoard(game.CurGameType); 
-
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " + 
+                Console.WriteLine("The Rule of Wild tic-tac-toe"); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("This is a 3-by-3 grid game."); 
+                Console.WriteLine("\n"); 
+                        
+                setDemoBoard(board, game, tac_0);
+                board.drawBoard(game.CurGameType); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The player who is playing" + "X" + "always goes first."); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("For example: the first player place the X on the board of middle."); 
+                         
+                board.drawBoard(game.CurGameType);  
+                Console.WriteLine("\n"); 
+                Console.WriteLine("Then, the second player can place O in any empty square on the board. "); 
+                Console.WriteLine("\n"); 
+                         
+                board.drawBoard(game.CurGameType); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " + 
                             "horizontally, vertically, or diagonally or until all squares on the grid are filled."); 
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("Therefore, there are FOUR result in Wild tic-tac-toe."); 
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("The First Result: Horizontally"); 
-                        setDemoBoard(board, game, tac_hor);
-                        board.drawBoard(game.CurGameType); 
-
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("The Second Result: Vertically"); 
-                        setDemoBoard(board, game, tac_ver);
-                        board.drawBoard(game.CurGameType); 
-
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("The Third Result: Diagonally"); 
-                        setDemoBoard(board, game, tac_diag);
-                        board.drawBoard(game.CurGameType); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("Therefore, there are FOUR result in Wild tic-tac-toe."); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The First Result: Horizontally"); 
  
-                        Console.WriteLine("\n"); 
-                        Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED"); 
-                        setDemoBoard(board, game, tac_fill);
-                        board.drawBoard(game.CurGameType); 
+                board.drawBoard(game.CurGameType); 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The Second Result: Vertically"); 
+ 
+                board.drawBoard(game.CurGameType);  
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The Third Result: Diagonally"); 
+                         
+                board.drawBoard(game.CurGameType); 
+ 
+                Console.WriteLine("\n"); 
+                Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED"); 
+                board.drawBoard(game.CurGameType); 
             }
             else
             { 
-                int[]  rsversi_0= new int[] {227,128,135,236};
-                int[]  rsversi_fir= new int[] {319,326,227,128,135,236,337,343};
-                int[]  rsversi_firDark= new int[] {219,227,228,136,235,};
-                int[]  rsversi_firLight= new int[] {219,227,228,134,136,135,};
-                int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163};
-                int[]  rsversi_ex2= new int[] {201,202,203,204,205,206,207,109,110,111,112,113,215,116,117,118,119,120,121,122,223,124,125,126,127,128,129,130,231,132,133,134,135,136,137,138,239,140,141,142,143,144,145,146,247,148,149,150,151,152,153,154,255,157,158,159,160,161};
-                int[]  rsversi_ex3= new int[] {105,113,114,116,117,118,119,120,121,122,223,126,127,128,129,231,134,135,136,239};
-
-
-
-
-                Console.WriteLine("The Rule of Reversi aka Othello"); 
-                Console.WriteLine("\n"); 
-                Console.WriteLine("This is a 8-by-8 grid game."); 
-                Console.WriteLine("\n"); 
-                Console.WriteLine("Each of the disks' two sides corresponds to one player."); 
-                Console.WriteLine("For the game of Othello, the game begins with four disks placed in a square in the middle of the grid, two light-side-up, two dark-side-up."); 
-                Console.WriteLine("\n"); 
-                Console.WriteLine("The initial board: four disks placed in a square, two light-side pieces; two dark-side pieces.");
-                Console.WriteLine("Same-colored disks are on a diagonal, and the dark-side-up disks are to the north-east and south-west (from both players' perspectives)");
-                setDemoBoard(board, game, rsversi_0);
-                board.drawBoard(game.CurGameType); 
-                
-                Console.WriteLine("\n"); 
-                Console.WriteLine("The dark player moves first."); 
-                Console.WriteLine("Dark must place a piece on the board and there exists at least one straight (horizontal, vertical, or diagonal) occupied line between the new piece and another dark piece,"
-                 + " with one or more contiguous light pieces between them.");
-                Console.WriteLine("For move one, dark has four options shown by translucently drawn pieces below:"); 
-                setDemoBoard(board, game, rsversi_fir);
-                board.drawBoard(game.CurGameType); 
-                
-                Console.WriteLine("\n"); 
-                Console.WriteLine("After placing the first dark piece, the middle of the light piece would alternate into dark piece. "); 
-                Console.WriteLine("\n"); 
-                setDemoBoard(board, game, rsversi_firDark);
-                board.drawBoard(game.CurGameType); 
-                
-                Console.WriteLine("\n"); 
-                Console.WriteLine("Then, placing the  light piece, the middle of the light piece would alternate into dark piece. "); 
-                Console.WriteLine("\n"); 
-                setDemoBoard(board, game, rsversi_firLight);
-                board.drawBoard(game.CurGameType); 
-
-                Console.WriteLine("Players take alternate turns. If one player cannot make a valid move, play passes back to the other player. When neither player can move, the game ends. "); 
-                Console.WriteLine("Examples where the game ends before the grid is completely filled:"); 
-                Console.WriteLine("\n"); 
-
-                Console.WriteLine("Example 1:"); 
-
-                setDemoBoard(board, game, rsversi_ex1);
-                board.drawBoard(game.CurGameType); 
-
-                Console.WriteLine("Example 2:"); 
-                setDemoBoard(board, game, rsversi_ex2);
-                board.drawBoard(game.CurGameType); 
-
-                Console.WriteLine("Example 3:"); 
-                setDemoBoard(board, game, rsversi_ex3);
-                board.drawBoard(game.CurGameType); 
-
-
-
-            }                    
-         
-             
+                int[]  rsversi_0= new int[] {227,128,135,236}; 
+                int[]  rsversi_fir= new int[] {319,326,227,128,135,236,337,343}; 
+                int[]  rsversi_firDark= new int[] {219,227,228,136,235,}; 
+                int[]  rsversi_firLight= new int[] {219,227,228,134,136,135,}; 
+                int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163}; 
+                int[]  rsversi_ex2= new int[] {201,202,203,204,205,206,207,109,110,111,112,113,215,116,117,118,119,120,121,122,223,124,125,126,127,128,129,130,231,132,133,134,135,136,137,138,239,140,141,142,143,144,145,146,247,148,149,150,151,152,153,154,255,157,158,159,160,161}; 
+                int[]  rsversi_ex3= new int[] {105,113,114,116,117,118,119,120,121,122,223,126,127,128,129,231,134,135,136,239}; 
+ 
+                Console.WriteLine("The Rule of Reversi aka Othello");  
+                Console.WriteLine("\n");  
+                Console.WriteLine("This is a 8-by-8 grid game.");  
+                Console.WriteLine("\n");  
+                Console.WriteLine("Each of the disks' two sides corresponds to one player.");  
+                Console.WriteLine("For the game of Othello, the game begins with four disks placed in a square in the middle of the grid, two light-side-up, two dark-side-up.");  
+                Console.WriteLine("\n");  
+                Console.WriteLine("The initial board: four disks placed in a square, two light-side pieces; two dark-side pieces."); 
+                Console.WriteLine("Same-colored disks are on a diagonal, and the dark-side-up disks are to the north-east and south-west (from both players' perspectives)"); 
+                setDemoBoard(board, game, rsversi_0); 
+                board.drawBoard(game.CurGameType);  
+                 
+                Console.WriteLine("\n");  
+                Console.WriteLine("The dark player moves first.");  
+                Console.WriteLine("Dark must place a piece on the board and there exists at least one straight (horizontal, vertical, or diagonal) occupied line between the new piece and another dark piece," 
+                 + " with one or more contiguous light pieces between them."); 
+                Console.WriteLine("For move one, dark has four options shown by translucently drawn pieces below:");  
+                setDemoBoard(board, game, rsversi_fir); 
+                board.drawBoard(game.CurGameType);  
+                 
+                Console.WriteLine("\n");  
+                Console.WriteLine("After placing the first dark piece, the middle of the light piece would alternate into dark piece. ");  
+                Console.WriteLine("\n");  
+                setDemoBoard(board, game, rsversi_firDark); 
+                board.drawBoard(game.CurGameType);  
+                 
+                Console.WriteLine("\n");  
+                Console.WriteLine("Then, placing the  light piece, the middle of the light piece would alternate into dark piece. ");  
+                Console.WriteLine("\n");  
+                setDemoBoard(board, game, rsversi_firLight); 
+                board.drawBoard(game.CurGameType);  
+ 
+                Console.WriteLine("Players take alternate turns. If one player cannot make a valid move, play passes back to the other player. When neither player can move, the game ends. ");  
+                Console.WriteLine("Examples where the game ends before the grid is completely filled:");  
+                Console.WriteLine("\n");  
+ 
+                Console.WriteLine("Example 1:");  
+ 
+                setDemoBoard(board, game, rsversi_ex1); 
+                board.drawBoard(game.CurGameType);  
+ 
+                Console.WriteLine("Example 2:");  
+                setDemoBoard(board, game, rsversi_ex2); 
+                board.drawBoard(game.CurGameType);  
+ 
+                Console.WriteLine("Example 3:");  
+                setDemoBoard(board, game, rsversi_ex3); 
+                board.drawBoard(game.CurGameType);  
+            }                     
+        }  
+ 
+        private void setDemoBoard(Board board, Game game, int[] arr_coor){ 
+            // fill coordinates of the demo board 
+            for (int i = 0 ; i < arr_coor.Count(); i ++){ 
+                board.transferrowcoltobox(arr_coor[i]%100, arr_coor[i]/100, game.CurGameType); 
+            } 
         } 
-
-        private void setDemoBoard(Board board, Game game, int[] arr_coor){
-            // fill coordinates of the demo board
-            for (int i = 0 ; i < arr_coor.Count(); i ++){
-                board.transferrowcoltobox(arr_coor[i]%100, arr_coor[i]/100, game.CurGameType);
-            }
-        }
-
-    }
+ 
+    } 
 }
