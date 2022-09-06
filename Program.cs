@@ -20,6 +20,9 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Game game = new Game();
             Board board = new Board();
             History history = new History();
+            WriteLine("Welcome to game board!");
+            WriteLine("Enter help for display the hint.");
+            WriteLine("You can enter undo/redo/save/load!\n\n");
             // let user to select which type of game he/she want to play
             WriteLine("Please enter which game you want to play:\n1.Wild tic-tac-toe\n2.Reversi aka Othello");
             game = game.setGameType(ReadLine(), game);
@@ -172,7 +175,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 }
             }else if (str_code == STR_FUNCODE[4]){
                 Hint hint = new Hint();
-                hint.showHelp(game, board);
+                hint.showHelp(game, board, history);
             }
         }
 
@@ -199,10 +202,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     }else{
                         // user choose play with human
                         row = player_list[num_CurPlayrer].tic_rowinput(num_CurPlayrer);
-                        if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
+                        if (row >= 996) {disPlayInfo(row, board, history, game); goto start;}; // display the help system menu
 
                         col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
-                        if (col >= 996) {disPlayInfo(col, board, history, game); continue; } // display the help system menu
+                        if (col >= 996) {disPlayInfo(col, board, history, game); goto start; } // display the help system menu
 
                         num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                         // check whether this move is valid
@@ -215,9 +218,10 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
                             col = player_list[num_CurPlayrer].tic_colinput(num_CurPlayrer);
                             if (col >= 996) {disPlayInfo(col, board, history, game); goto start;} // display the help system menu
+                            num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                         }
                     }
-                    WriteLine($"-->{row},{col}");
+                    // WriteLine($"-->{row},{col}");
                     num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                     history.recordHistory(num_curMove, num_CurPlayrer);
                     board.transferrowcoltobox(
@@ -249,12 +253,13 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                         // check whether this move is valid
                         while (!history.checkAvailable(num_curMove)){
                             int[] arr_tmp = board.convertCoorSysToTwo(num_curMove, game.CurGameType);
-                            WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
-                            WriteLine("Please re-enter a valid position!!");
+                            // WriteLine($"This position ({arr_tmp[0]},{arr_tmp[1]}) has been placed a chess!!");
+                            // WriteLine("Please re-enter a valid position!!");
                             row = player_list[num_CurPlayrer].reversi_rowinput(num_CurPlayrer);
-                            if (row >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
+                            if (row >= 996) {disPlayInfo(row, board, history, game); goto start;}; // display the help system menu
                             col = player_list[num_CurPlayrer].reversi_colinput(num_CurPlayrer);
-                            if (col >= 996) {disPlayInfo(row, board, history, game); continue;}; // display the help system menu
+                            if (col >= 996) {disPlayInfo(row, board, history, game); goto start;}; // display the help system menu
+                            num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
                         }
                     }
                     num_curMove = board.convertCoorSysToOne(row, col, game.CurGameType);
@@ -486,7 +491,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
 
         public void checkReversiResult(int t_row, int t_col, int tokenStatus, int moves, Board board, History history,string gt){
-            WriteLine($"{t_row},{t_col}");
             int cur_pos = board.convertCoorSysToOne(t_row, t_col, gt);
             
             // eight position around the current pos
@@ -571,24 +575,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
     class Board : Game
     {
-        
-         /* 
-           # 1 -------
-           # 2 | | | |
-           # 3 -------
-           # 4 | | | |
-           # 5 -------
-           # 6 | | | |
-           # 7 -------
-        */
-
-        /*
-         * column > 9
-         * row > 7
-         * - >> 1,3,5,7
-         * | >> 
-         * " " >> 2,4,6
-         */
 
         // Convert two dimension coordinate to one dimension
         public int convertCoorSysToOne(int row, int col, string gt){
@@ -627,16 +613,36 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             return 0;
         }
 
+        public int transferrowcoltoboxDemo(int coor, int status, string gt)
+        {
+            // WriteLine($"[Transferrowcoltobox]:{status}--{gt}---{coor}");
+            bool isWindows=System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+            //Tic Tac Toe
+            if (gt == (GameType.tictactoe).ToString()){
+                tic_cDemo[coor] = status == 2 ? "\u202FO\u202F" : status == 1 ? "\u202FX\u202F" : "\u202F\u202F\u202F";
+                // WriteLine($"..{coor}....{tic_c[coor]}");
+            }else{
+                if (isWindows){
+                    reversi_cDemo[coor] = status == 2 ? "\u25CF\u202F" : status == 1 ? "\u25CB\u202F" : status ==3 ?"\u26B9\u202F": "\u202F\u202F";
+                }else{
+                    reversi_cDemo[coor] = status == 2 ? "\u202F\u25CF\u202F" : status == 1 ? "\u202F\u25CB\u202F" : status ==3 ?"\u202F\u26B9\u202F": "\u202F\u202F\u202F";     
+                }
+            }
+            
+            // 25CB black circle
+            // 25CF white circle
+
+
+            return 0;
+        }
+
         // update the reversi_c
         public void updateReversiArr(List<int> arr_pos){
             WriteLine("Enter UpdateReversiArr");
             for (int i = 0 ; i < arr_pos.Count() ; i ++){
                 int num_tokenStatus = arr_pos[i] / 100;
                 int num_tokenPos = arr_pos[i] % 100;
-                WriteLine($"[updateReversiArr]: {num_tokenPos}, {num_tokenStatus}");
-                WriteLine($"before:{reversi_c[num_tokenPos]}");
-                reversi_c[num_tokenPos] = num_tokenStatus == 2 ? "\u202F\u25CB\u202F" : "\u202F\u25CF\u202F" ; // reverse the token
-                WriteLine($"after:{reversi_c[num_tokenPos]}");
+                reversi_c[num_tokenPos] = num_tokenStatus == 2 ? "\u25CB\u202F" : "\u25CF\u202F" ; // reverse the token
             }
         }
 
@@ -703,6 +709,80 @@ namespace ChessGame // Note: actual namespace depends on the project name.
 
         }
 
+
+        // display demo board
+        public void drawDemoBoard(string gt){
+            if (gt == (GameType.tictactoe).ToString()) ticboardDemo();
+            else reversiboardDemo();
+        }
+        private void ticboardDemo()
+        {
+            Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_cDemo[0], tic_cDemo[1], tic_cDemo[2]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_cDemo[3], tic_cDemo[4], tic_cDemo[5]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502", tic_cDemo[6], tic_cDemo[7], tic_cDemo[8]);
+            Console.WriteLine("\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2518");
+        }
+
+        private void reversiboardDemo()
+        {
+            // Console.WriteLine("Row: 2, 4, 6, 8, 10, 12, 14, 16");
+            // Console.WriteLine("Col: 2, 4, 6, 8, 10, 12, 14, 16");
+            Console.WriteLine("\u250c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2510");
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[0], reversi_cDemo[1], reversi_cDemo[2], reversi_cDemo[3], reversi_cDemo[4], reversi_cDemo[5], reversi_cDemo[6], reversi_cDemo[7]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[8], reversi_cDemo[9], reversi_cDemo[10], reversi_cDemo[11], reversi_cDemo[12], reversi_cDemo[13], reversi_cDemo[14], reversi_cDemo[15]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[16], reversi_cDemo[17], reversi_cDemo[18], reversi_cDemo[19], reversi_cDemo[20], reversi_cDemo[21], reversi_cDemo[22], reversi_cDemo[23]);
+           Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[24], reversi_cDemo[25], reversi_cDemo[26], reversi_cDemo[27], reversi_cDemo[28], reversi_cDemo[29], reversi_cDemo[30], reversi_cDemo[31]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[32], reversi_cDemo[33], reversi_cDemo[34], reversi_cDemo[35], reversi_cDemo[36], reversi_cDemo[37], reversi_cDemo[38], reversi_cDemo[39]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[40], reversi_cDemo[41], reversi_cDemo[42], reversi_cDemo[43], reversi_cDemo[44], reversi_cDemo[45], reversi_cDemo[46], reversi_cDemo[47]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[48], reversi_cDemo[49], reversi_cDemo[50], reversi_cDemo[51], reversi_cDemo[52], reversi_cDemo[53], reversi_cDemo[54], reversi_cDemo[55]);
+            Console.WriteLine("\u251c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2524");
+
+            Console.WriteLine("\u2502{0}\u2502{1}\u2502{2}\u2502{3}\u2502{4}\u2502{5}\u2502{6}\u2502{7}\u2502",
+                reversi_cDemo[56], reversi_cDemo[57], reversi_cDemo[58], reversi_cDemo[59], reversi_cDemo[60], reversi_cDemo[61], reversi_cDemo[62], reversi_cDemo[63]);
+            Console.WriteLine("\u2514\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2518");
+
+        }
+
+        public void initialDemoChessBoard(Game game){
+            if (game.CurGameType == (GameType.tictactoe).ToString()){
+                for (int i = 0 ; i < 9 ; i ++)
+                    tic_cDemo[i] = STR_SPACE;
+            }else{
+                for (int i = 0 ; i < 64 ; i ++)
+                    reversi_cDemo[i] = STR_SPACE;
+                
+                int[] arr_defalutCoor = new int[] {27, 28, 35, 36};
+                bool isWindows=System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+                reversi_cDemo[27] = isWindows ? "\u25CF\u202F" : "\u202F\u25CF\u202F";
+                reversi_cDemo[28] = isWindows ? "\u25CB\u202F" : "\u202F\u25CB\u202F";
+                reversi_cDemo[35] = isWindows ? "\u25CB\u202F" : "\u202F\u25CB\u202F";
+                reversi_cDemo[36] = isWindows ? "\u25CF\u202F" : "\u202F\u25CF\u202F";
+
+            }
+        }
+
         // clean the content save in the tic_coordi
         public void initialChessBoard(Game game){
             if (game.CurGameType == (GameType.tictactoe).ToString()){
@@ -713,10 +793,12 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                     reversi_c[i] = STR_SPACE;
                 
                 int[] arr_defalutCoor = new int[] {27, 28, 35, 36};
-                reversi_c[27] = "\u202F\u25CF\u202F";
-                reversi_c[28] = "\u202F\u25CB\u202F";
-                reversi_c[35] = "\u202F\u25CB\u202F";
-                reversi_c[36] = "\u202F\u25CF\u202F";
+                bool isWindows=System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows);
+                
+                reversi_c[27] = isWindows ? "\u25CF\u202F" : "\u202F\u25CF\u202F";
+                reversi_c[28] = isWindows ? "\u25CB\u202F" : "\u202F\u25CB\u202F";
+                reversi_c[35] = isWindows ? "\u25CB\u202F" : "\u202F\u25CB\u202F";
+                reversi_c[36] = isWindows ? "\u25CF\u202F" : "\u202F\u25CF\u202F";
 
             }
         }
@@ -728,6 +810,8 @@ namespace ChessGame // Note: actual namespace depends on the project name.
         public static string[] tic_c = new string[9]; //saving chess at each position
         public static string[] reversi_c = new string[64]; //saving chess at each position
 
+        public static string[] tic_cDemo = new string[9];
+        public static string[] reversi_cDemo = new string[64]; //saving chess at each position
         private List<int> rowcolstatuslist = new List<int>();
         public List<int> Rowcolstatuslist
         {
@@ -823,10 +907,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             }
             return true;
         }
-    }
-
-    class Chess : Board {
-
     }
 
 
@@ -1376,6 +1456,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
     }
 
     class Hint : Game {
+        private List<int> backUpTrack = new List<int> {};
         private static void help(Game game) 
         { 
             Console.WriteLine("Helping System:"); 
@@ -1383,7 +1464,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
             Console.WriteLine("Please enter 'B' to back to meun..."); 
             Console.WriteLine("\n");
         } 
-        public void showHelp(Game game, Board board) 
+        public void showHelp(Game game, Board board, History history) 
         { 
             //bool showHelp = true; 
             if (game.CurGameType == (GameType.tictactoe).ToString()) 
@@ -1398,7 +1479,6 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 int[]  tac_ver= new int[] {101,104,107};
                 int[]  tac_diag= new int[] {102,104,106}; 
                 int[]  tac_fill= new int[] {100,201,202,203,104,105,106,107,208}; 
-
  
                 Console.WriteLine("The Rule of Wild tic-tac-toe"); 
                 Console.WriteLine("\n"); 
@@ -1406,20 +1486,20 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("\n"); 
                         
                 setDemoBoard(board, game, tac_0);
-                board.drawBoard(game.CurGameType); 
+                board.drawDemoBoard(game.CurGameType); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The player who is playing" + "X" + "always goes first."); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("For example: the first player place the X on the board of middle."); 
 
                 setDemoBoard(board, game, tac_fir);
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
                 Console.WriteLine("\n"); 
                 Console.WriteLine("Then, the second player can place O in any empty square on the board. "); 
                 Console.WriteLine("\n"); 
                          
                 setDemoBoard(board, game, tac_sec);
-                board.drawBoard(game.CurGameType); 
+                board.drawDemoBoard(game.CurGameType); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("Players alternate placing Xs and Os on the board until either player has three in a row, " + 
                             "horizontally, vertically, or diagonally or until all squares on the grid are filled."); 
@@ -1429,23 +1509,25 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("The First Result: Horizontally"); 
 
                 setDemoBoard(board, game, tac_hor);
-                board.drawBoard(game.CurGameType); 
+                board.drawDemoBoard(game.CurGameType); 
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The Second Result: Vertically"); 
 
                 setDemoBoard(board, game, tac_ver);       
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The Third Result: Diagonally"); 
 
 
                 setDemoBoard(board, game, tac_diag);             
-                board.drawBoard(game.CurGameType); 
+                board.drawDemoBoard(game.CurGameType); 
  
                 Console.WriteLine("\n"); 
                 Console.WriteLine("The Fourth Result: ALL GRID ARE FILLED"); 
                 setDemoBoard(board, game, tac_fill);
-                board.drawBoard(game.CurGameType); 
+                board.drawDemoBoard(game.CurGameType); 
+
+                // this.recoverBorder(board, history, game);
             }
             else
             { 
@@ -1456,7 +1538,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 int[]  rsversi_ex1= new int[] {100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,132,133,134,135,136,137,140,141,142,143,144,145,247,148,149,150,151,152,153,154,156,157,158,159,160,161,162,163}; 
                 int[]  rsversi_ex2= new int[] {201,202,203,204,205,206,207,109,110,111,112,113,215,116,117,118,119,120,121,122,223,124,125,126,127,128,129,130,231,132,133,134,135,136,137,138,239,140,141,142,143,144,145,146,247,148,149,150,151,152,153,154,255,157,158,159,160,161}; 
                 int[]  rsversi_ex3= new int[] {105,113,114,116,117,118,119,120,121,122,223,126,127,128,129,231,134,135,136,239}; 
- 
+
                 Console.WriteLine("The Rule of Reversi aka Othello");  
                 Console.WriteLine("\n");  
                 Console.WriteLine("This is a 8-by-8 grid game.");  
@@ -1467,7 +1549,7 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("The initial board: four disks placed in a square, two light-side pieces; two dark-side pieces."); 
                 Console.WriteLine("Same-colored disks are on a diagonal, and the dark-side-up disks are to the north-east and south-west (from both players' perspectives)"); 
                 setDemoBoard(board, game, rsversi_0); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
                  
                 Console.WriteLine("\n");  
                 Console.WriteLine("The dark player moves first.");  
@@ -1475,19 +1557,19 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                  + " with one or more contiguous light pieces between them."); 
                 Console.WriteLine("For move one, dark has four options shown by translucently drawn pieces below:");  
                 setDemoBoard(board, game, rsversi_fir); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
                  
                 Console.WriteLine("\n");  
                 Console.WriteLine("After placing the first dark piece, the middle of the light piece would alternate into dark piece. ");  
                 Console.WriteLine("\n");  
                 setDemoBoard(board, game, rsversi_firDark); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
                  
                 Console.WriteLine("\n");  
                 Console.WriteLine("Then, placing the  light piece, the middle of the light piece would alternate into dark piece. ");  
                 Console.WriteLine("\n");  
                 setDemoBoard(board, game, rsversi_firLight); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
  
                 Console.WriteLine("Players take alternate turns. If one player cannot make a valid move, play passes back to the other player. When neither player can move, the game ends. ");  
                 Console.WriteLine("Examples where the game ends before the grid is completely filled:");  
@@ -1496,26 +1578,44 @@ namespace ChessGame // Note: actual namespace depends on the project name.
                 Console.WriteLine("Example 1:");  
  
                 setDemoBoard(board, game, rsversi_ex1); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
  
                 Console.WriteLine("Example 2:");  
                 setDemoBoard(board, game, rsversi_ex2); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
  
                 Console.WriteLine("Example 3:");  
                 setDemoBoard(board, game, rsversi_ex3); 
-                board.drawBoard(game.CurGameType);  
+                board.drawDemoBoard(game.CurGameType);  
+
+                // this.recoverBorder(board, history, game);
             }                     
         }  
  
         private void setDemoBoard(Board board, Game game, int[] arr_coor){ 
-            board.initialChessBoard(game);
+            board.initialDemoChessBoard(game);
             // fill coordinates of the demo board 
             for (int i = 0 ; i < arr_coor.Count(); i ++){ 
                 // WriteLine($"[setDemoBoard]: {i}-{arr_coor[i]}");
-                board.transferrowcoltobox(arr_coor[i]%100, arr_coor[i]/100, game.CurGameType); 
-            } 
+                board.transferrowcoltoboxDemo(arr_coor[i]%100, arr_coor[i]/100, game.CurGameType); 
+            }
         } 
+
+        // private void backUpBorder(History history){
+        //     this.backUpTrack.Clear();
+        //     for (int i = 0 ; i < history.forwardTrack.Count() ; i ++){
+        //         this.backUpTrack.Add(history.forwardTrack.Pop());
+        //     }
+        // }
+
+        // private void recoverBorder(Board board, History history, Game game){
+        //     history.forwardTrack.Clear();
+        //     for (int i = this.backUpTrack.Count() - 1 ; i >= 0  ; i --){
+        //         history.forwardTrack.Push(this.backUpTrack[i]);
+        //     }
+        //     board.initialChessBoard(game);
+        //     board.syncBoard(history, board, game);
+        // }
  
     } 
 }
